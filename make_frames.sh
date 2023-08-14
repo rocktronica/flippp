@@ -170,15 +170,7 @@ _ME="$(basename "${0}")"
 # Print the program help information.
 _print_help() {
   cat <<HEREDOC
-      _                 _
-  ___(_)_ __ ___  _ __ | | ___
- / __| | '_ \` _ \\| '_ \\| |/ _ \\
- \\__ \\ | | | | | | |_) | |  __/
- |___/_|_| |_| |_| .__/|_|\\___|
-                 |_|
-
-Boilerplate for creating a simple bash script with some basic strictness
-checks and help features.
+Make frames from video
 
 Usage:
   ${_ME} [<arguments>]
@@ -194,7 +186,7 @@ HEREDOC
 ###############################################################################
 
 _simple() {
-  printf "Perform a simple operation.\\n"
+  ffmpeg -i input.mov -vf fps=30 output/%d.jpg
 }
 
 ###############################################################################
