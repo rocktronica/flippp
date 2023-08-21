@@ -10,7 +10,7 @@ set -o errtrace
 timestamp=$(git log -n1 --date=unix --format="%ad")
 commit_hash=$(git log -n1 --format="%h")
 
-fps="30"
+fps="4"
 dir="output/$fps-$timestamp-$commit_hash"
 
 function help() {
@@ -24,7 +24,7 @@ Usage:
 ./make_frames.sh                    Export all STLs
 ./make_frames.sh -h                 Show this message and quit
 ./make_frames.sh -f <fps>           Set frames/second
-                                    Default is 30
+                                    Default is 4
 
 Examples:
 ./make_frames.sh -f 2
@@ -32,12 +32,19 @@ Examples:
 }
 
 function _make_frames() {
-    # ffmpeg -i input.mov -vf fps="${fps}" "${dir}/%d.jpg"
+    ffmpeg -i input.mov -vf fps="${fps}" "${dir}/%d.jpg"
 
-    for filename in "${dir}"/*.jpg; do
-      echo -i "$filename" -o "$filename.png"
-      shortcuts run "export_foreground" -i "$filename" -o "$filename.png"
-    done
+    # for filename in "${dir}"/*.jpg; do
+      # echo -i "$filename" -o "$filename.jpg"
+      # TODO: run processing
+    # done
+}
+
+function _make_site() {
+    python3 build_site.py --directory "$dir"
+    cd "$dir"
+    open http://127.0.0.1:8080
+    http-server
 }
 
 function run() {
@@ -52,6 +59,7 @@ function run() {
     start=`date +%s`
 
     _make_frames
+    _make_site
 
     end=`date +%s`
     runtime=$((end-start))
