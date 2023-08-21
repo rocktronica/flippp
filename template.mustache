@@ -6,14 +6,52 @@
     <title>desiwalk</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style>
-        * { margin: 0; padding: 0; }
-        img { display: block; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @page {
+            margin: 0;
+            padding: 0;
+
+            size: 8.5in 11in;
+        }
+
+        html {
+            background: #eee;
+        }
+
+        body {
+            width: 8.5in;
+            background: #fff;
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        article {
+            width: calc(8.5in / 2);
+            height: calc(11in / 2);
+            padding: .25in;
+            outline: 1px dashed #ccc;
+            display: flex;
+            justify-content: right;
+        }
+
+        img {
+            display: block;
+            max-width: 100%;
+            max-height: 100%;
+        }
     </style>
 </head>
 
 <body>
     {{#files}}
-        <img src="{{filename}}" />
+        <article>
+            <img src="{{filename}}" />
+        </article>
     {{/files}}
 </body>
 

@@ -8,6 +8,8 @@ import sys
 def get_files(directory):
     filenames = glob(directory + "/*.jpg")
 
+    # TODO: https://stackoverflow.com/a/5432789
+
     return map(
         lambda filename: {
             "filename": os.path.relpath(filename, directory),
