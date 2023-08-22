@@ -42,9 +42,6 @@ function _make_frames() {
 
 function _make_site() {
     python3 build_site.py --directory "$dir"
-    cd "$dir"
-    open http://127.0.0.1:8080
-    http-server
 }
 
 function run() {
