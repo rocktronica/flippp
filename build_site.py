@@ -9,7 +9,7 @@ def get_files(directory):
     filenames = glob(directory + "/*.png")
 
     return [
-        {"i": i, "filename": os.path.relpath(filename, directory)}
+        {"i": i + 1, "filename": os.path.relpath(filename, directory)}
         for i, filename in enumerate(sorted(filenames))
     ]
 

@@ -12,7 +12,7 @@ commit_hash=$(git log -n1 --format="%h")
 
 input="input.mov"
 fps="4"
-dir="output/$fps-$timestamp-$commit_hash"
+dir="output/$timestamp-$commit_hash-$fps-$input"
 
 function help() {
     echo "\
@@ -33,7 +33,7 @@ Examples:
 }
 
 function _make_frames() {
-    ffmpeg -i "${input}" -vf fps="${fps}" "${dir}/%d.png"
+    ffmpeg -i "${input}" -vf fps="${fps}" "${dir}/%04d.png"
 
     # for filename in "${dir}"/*.png; do
       # echo -i "$filename" -o "$filename.png"
