@@ -10,6 +10,7 @@ set -o errtrace
 timestamp=$(git log -n1 --date=unix --format="%ad")
 commit_hash=$(git log -n1 --format="%h")
 
+input="input.mov"
 fps="4"
 dir="output/$fps-$timestamp-$commit_hash"
 
@@ -18,13 +19,13 @@ function help() {
 Make frames from video
 
 Usage:
-./make_frames.sh [-hectb] [-p fps] [-d DIRECTORY] [-q COMMA,SEPARATED,QUERY]
+./make_frames.sh [-h] [-p fps] [-f path]
 
 Usage:
 ./make_frames.sh                    Export all STLs
 ./make_frames.sh -h                 Show this message and quit
-./make_frames.sh -f <fps>           Set frames/second
-                                    Default is 4
+./make_frames.sh -f <fps>           Set frames/second (Default: 4)
+./make_frames.sh -fi <path>         Set input file path (Default: input.mov)
 
 Examples:
 ./make_frames.sh -f 2
@@ -32,10 +33,10 @@ Examples:
 }
 
 function _make_frames() {
-    ffmpeg -i input.mov -vf fps="${fps}" "${dir}/%d.jpg"
+    ffmpeg -i "${input}" -vf fps="${fps}" "${dir}/%d.png"
 
-    # for filename in "${dir}"/*.jpg; do
-      # echo -i "$filename" -o "$filename.jpg"
+    # for filename in "${dir}"/*.png; do
+      # echo -i "$filename" -o "$filename.png"
       # TODO: run processing
     # done
 }
@@ -65,9 +66,10 @@ function run() {
     echo "Finished in $runtime seconds"
 }
 
-while getopts "h?f:" opt; do
+while getopts "h?i:f:" opt; do
     case "$opt" in
         h) help; exit ;;
+        i) input="$OPTARG" ;;
         f) fps="$OPTARG" ;;
         *) help; exit ;;
     esac

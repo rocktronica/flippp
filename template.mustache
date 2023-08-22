@@ -30,26 +30,31 @@
             flex-wrap: wrap;
         }
 
-        figure {
+        .panel {
             width: calc(8.5in / 2);
             height: calc(11in / 2);
             padding: .25in;
             outline: 1px dashed #ccc;
             display: flex;
             justify-content: right;
-            position: relative;
         }
 
-        figcaption {
-            position: absolute;
-            top: .25in;
-            left: .25in;
+        .number {
+            min-width: .5in;
+            font-family: monospace;
+        }
+
+        .content {
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            filter: contrast(120%) brightness(200%);
         }
 
         img {
             display: block;
-            max-width: 100%;
-            max-height: 100%;
+            height: 100%;
         }
 
         @media print {
@@ -62,10 +67,12 @@
 
 <body>
     {{#files}}
-        <figure>
-            <figcaption>{{i}}</figcaption>
-            <img src="{{filename}}" />
-        </figure>
+        <div class="panel">
+            <div class="number">{{i}}</div>
+            <div class="content">
+                <img src="{{filename}}" />
+            </div>
+        </div>
     {{/files}}
 </body>
 

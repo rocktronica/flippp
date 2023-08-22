@@ -6,7 +6,7 @@ import sys
 
 
 def get_files(directory):
-    filenames = glob(directory + "/*.jpg")
+    filenames = glob(directory + "/*.png")
 
     return [
         {"i": i, "filename": os.path.relpath(filename, directory)}
