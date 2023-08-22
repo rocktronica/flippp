@@ -8,14 +8,10 @@ import sys
 def get_files(directory):
     filenames = glob(directory + "/*.jpg")
 
-    # TODO: https://stackoverflow.com/a/5432789
-
-    return map(
-        lambda filename: {
-            "filename": os.path.relpath(filename, directory),
-        },
-        sorted(filenames),
-    )
+    return [
+        {"i": i, "filename": os.path.relpath(filename, directory)}
+        for i, filename in enumerate(sorted(filenames))
+    ]
 
 
 def get_html(directory):
