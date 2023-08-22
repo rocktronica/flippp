@@ -11,24 +11,25 @@ timestamp=$(git log -n1 --date=unix --format="%ad")
 commit_hash=$(git log -n1 --format="%h")
 
 input="input.mov"
+input_basename=$(basename "$input")
 fps="4"
-dir="output/$timestamp-$commit_hash-$fps-$input"
+dir="output/$timestamp-$commit_hash-$fps-$input_basename"
 
 function help() {
     echo "\
 Make frames from video
 
 Usage:
-./make_frames.sh [-h] [-p fps] [-f path]
+./make_frames.sh [-h] [-f fps] [-f path]
 
 Usage:
 ./make_frames.sh                    Export all STLs
 ./make_frames.sh -h                 Show this message and quit
 ./make_frames.sh -f <fps>           Set frames/second (Default: 4)
-./make_frames.sh -fi <path>         Set input file path (Default: input.mov)
+./make_frames.sh -i <path>          Set input file path (Default: input.mov)
 
 Examples:
-./make_frames.sh -f 2
+./make_frames.sh -f 2 -i path/to/file.mp4
 "
 }
 
@@ -74,6 +75,10 @@ while getopts "h?i:f:" opt; do
         *) help; exit ;;
     esac
 done
+
+# Remake output directory
+input_basename=$(basename "$input")
+dir="output/$timestamp-$commit_hash-$fps-$input_basename"
 
 run "${query[@]}"
 
