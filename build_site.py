@@ -1,8 +1,24 @@
 from glob import glob
 import argparse
 import chevron
+import math
 import os
 import sys
+
+
+# [1-18] ->  [1,4,7,10,13,16,2,5,8,11,14,17,3,6,9,12,15,18]
+def panelize(input, panels_per_page=6):
+    output = []
+    page_count = math.ceil(len(input) / panels_per_page)
+
+    for i, value in enumerate(input):
+        page_index = math.floor(i / panels_per_page)
+        panel_index = i % panels_per_page
+        index = panel_index * page_count + page_index
+
+        output.append(input[index])
+
+    return output
 
 
 def get_files(directory):
