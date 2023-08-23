@@ -6,33 +6,42 @@ import os
 import sys
 
 
+def get_page_index(i, panels_per_page=6):
+    return math.floor(i / panels_per_page)
+
+
 # [1-18] ->  [1,4,7,10,13,16,2,5,8,11,14,17,3,6,9,12,15,18]
 def panelize(input, panels_per_page=6):
     output = []
     page_count = math.ceil(len(input) / panels_per_page)
 
-    for i, value in enumerate(input):
-        page_index = math.floor(i / panels_per_page)
+    for i in range(page_count * panels_per_page):
+        page_index = get_page_index(i, panels_per_page)
         panel_index = i % panels_per_page
-        index = panel_index * page_count + page_index
+        input_index = panel_index * page_count + page_index
 
-        output.append(input[index])
+        appendee = input[input_index] if input_index <= len(input) - 1 else None
+
+        output.append(appendee)
 
     return output
 
 
-def get_files(directory):
+def get_panels(directory):
     filenames = glob(directory + "/*.png")
 
     return [
-        {"i": i + 1, "filename": os.path.relpath(filename, directory)}
-        for i, filename in enumerate(sorted(filenames))
+        {
+            "i": i + 1,
+            "filename": os.path.relpath(filename, directory) if filename else None,
+        }
+        for i, filename in enumerate(panelize(sorted(filenames)))
     ]
 
 
 def get_html(directory):
     values = {
-        "files": get_files(directory),
+        "files": get_panels(directory),
     }
 
     return chevron.render(template, values)
