@@ -27,13 +27,13 @@ def panelize(input, panels_per_page=6):
     return output
 
 
-def get_panels(directory):
+def get_panels(directory, panels_per_page=6):
     filenames = glob(directory + "/*.png")
 
     return [
         {
-            "i": i + 1,
             "filename": os.path.relpath(filename, directory) if filename else None,
+            "page": get_page_index(i, panels_per_page),
         }
         for i, filename in enumerate(panelize(sorted(filenames)))
     ]

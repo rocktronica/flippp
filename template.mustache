@@ -39,13 +39,16 @@
             justify-content: right;
         }
 
-        .number {
+        .handle {
+            width: .5in;
             min-width: .5in;
             font-family: monospace;
+            writing-mode: vertical-lr;
         }
 
         .content {
             overflow: hidden;
+            flex: 1;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -68,10 +71,14 @@
 <body>
     {{#files}}
         <div class="panel">
-            <div class="number">{{i}}</div>
-            <div class="content">
-                <img src="{{filename}}" />
-            </div>
+            {{#filename}}
+                <div class="handle">
+                    {{filename}} | Page {{page}}
+                </div>
+                <div class="content">
+                    <img src="{{filename}}" />
+                </div>
+            {{/filename}}
         </div>
     {{/files}}
 </body>
