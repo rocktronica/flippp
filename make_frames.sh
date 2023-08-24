@@ -16,7 +16,7 @@ fps="4"
 rows="3"
 columns="2"
 
-dir="output/$timestamp-$commit_hash-$fps-$input_basename"
+dir="output/${timestamp}-${commit_hash}/${fps}-${rows}x${columns}-${input_basename}"
 
 function help() {
     echo "\
@@ -94,7 +94,7 @@ done
 
 # Remake output directory
 input_basename=$(basename "$input")
-dir="output/$timestamp-$commit_hash-$fps-$input_basename"
+dir="output/${timestamp}-${commit_hash}/${fps}-${rows}x${columns}-${input_basename}"
 
 run "${query[@]}"
 
