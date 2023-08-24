@@ -13,6 +13,9 @@ commit_hash=$(git log -n1 --format="%h")
 input="input.mov"
 input_basename=$(basename "$input")
 fps="4"
+rows="3"
+columns="2"
+
 dir="output/$timestamp-$commit_hash-$fps-$input_basename"
 
 function help() {
@@ -25,8 +28,10 @@ Usage:
 Usage:
 ./make_frames.sh                    Export all STLs
 ./make_frames.sh -h                 Show this message and quit
-./make_frames.sh -f <fps>           Set frames/second (Default: 4)
 ./make_frames.sh -i <path>          Set input file path (Default: input.mov)
+./make_frames.sh -f <fps>           Set frames/second (Default: ${fps})
+./make_frames.sh -r <rows>          Set panel rows/sheet (Default: ${rows})
+./make_frames.sh -c <columns>       Set panel columns/sheet (Default: ${columns})
 
 Examples:
 ./make_frames.sh -f 2 -i path/to/file.mp4
@@ -43,7 +48,10 @@ function _make_frames() {
 }
 
 function _make_site() {
-    python3 build_site.py --directory "$dir"
+    python3 build_site.py \
+        --directory "$dir" \
+        --rows "$rows" \
+        --columns "$columns"
 }
 
 function run() {
@@ -67,11 +75,13 @@ function run() {
     echo "Finished in $runtime seconds"
 }
 
-while getopts "h?i:f:" opt; do
+while getopts "h?i:f:r:c:" opt; do
     case "$opt" in
         h) help; exit ;;
         i) input="$OPTARG" ;;
         f) fps="$OPTARG" ;;
+        r) rows="$OPTARG" ;;
+        c) columns="$OPTARG" ;;
         *) help; exit ;;
     esac
 done
