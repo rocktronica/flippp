@@ -33,31 +33,32 @@
         .panel {
             width: calc(8.5in / {{columns}});
             height: calc(11in / {{rows}});
+
             padding: .25in;
+
             outline: 1px dashed #ccc;
+
             display: flex;
-            justify-content: right;
+            justify-content: space-between;
         }
 
         .handle {
-            width: 1in;
-            min-width: 1in;
+            width: .5in;
+            min-width: .5in;
             font-family: monospace;
             writing-mode: vertical-lr;
         }
 
         .content {
-            overflow: hidden;
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            filter: contrast(120%) brightness(200%);
-        }
+            /* TODO: tidy, fix against portrait/landscape */
+            width: calc((11in - .25in * {{rows}} * 2) / {{rows}});
+            height: calc((11in - .25in * {{rows}} * 2) / {{rows}});
 
-        img {
-            display: block;
-            height: 100%;
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center center;
+
+            filter: contrast(120%) brightness(200%);
         }
 
         @media print {
@@ -75,9 +76,7 @@
                 <div class="handle">
                     {{filename}} | Page {{page}}
                 </div>
-                <div class="content">
-                    <img src="{{filename}}" />
-                </div>
+                <div class="content" style="background-image:url({{filename}})"></div>
             {{/filename}}
         </div>
     {{/panels}}
