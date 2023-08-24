@@ -38,8 +38,12 @@ Examples:
 "
 }
 
-function _make_frames() {
-    ffmpeg -i "${input}" -vf fps="${fps}" "${dir}/%04d.png"
+function _extract_frames() {
+    echo "Extracting frames"
+    ffmpeg -i "${input}" \
+        -vf fps="${fps}" \
+        -hide_banner -loglevel error \
+        "${dir}/%04d.png"
 
     # for filename in "${dir}"/*.png; do
       # echo -i "$filename" -o "$filename.png"
@@ -47,15 +51,16 @@ function _make_frames() {
     # done
 }
 
-function _make_site() {
-    python3 build_site.py \
+function _build_html() {
+    echo "Building HTML"
+    python3 build_html.py \
         --directory "$dir" \
         --rows "$rows" \
         --columns "$columns"
 }
 
 function run() {
-    mkdir -pv $dir
+    mkdir -pv $dir 1> /dev/null
 
     function finish() {
         # Kill descendent processes
@@ -65,8 +70,9 @@ function run() {
 
     start=`date +%s`
 
-    _make_frames
-    _make_site
+    _extract_frames
+    _build_html
+    # TODO: PDF output
 
     end=`date +%s`
     runtime=$((end-start))

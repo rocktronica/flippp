@@ -40,8 +40,9 @@ def get_panels(directory, panels_per_page):
 
 
 def get_html(directory, rows, columns):
+    # TODO: send pages w/ child panels for print margin control
     values = {
-        "files": get_panels(directory, panels_per_page=rows * columns),
+        "panels": get_panels(directory, panels_per_page=rows * columns),
         "rows": rows,
         "columns": columns,
     }
