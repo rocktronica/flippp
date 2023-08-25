@@ -43,6 +43,10 @@ function _extract_frames() {
         -hide_banner -loglevel error \
         "${dir}/%04d.png"
 
+    frame_count=$(ls -lR "$dir"/*.png | wc -l | xargs)
+
+    echo "  - ${frame_count} frames extracted"
+
     echo
 }
 
@@ -52,6 +56,7 @@ function _build_html() {
         --directory "$dir" \
         --rows "$rows" \
         --columns "$columns"
+    echo "  - Built to ${dir}"
 
     echo
 }
@@ -75,6 +80,8 @@ function _export_pdf() {
         "http://localhost:9002" \
         2> /dev/null
 
+    echo "  - PDF at $dir/output.pdf"
+
     echo "  - Stopping PID ${pid}"
     { kill "${pid}" && wait "${pid}"; } 2>/dev/null
 
@@ -82,9 +89,13 @@ function _export_pdf() {
 }
 
 function _report() {
-    frame_count=$(ls -lR "$dir"/*.png | wc -l | xargs)
+    start="$1"
+    end=`date +%s`
+    runtime=$((end-start))
 
-    echo "Extracted ${frame_count} frames from ${input} into ${dir}"
+    echo "Done!"
+    echo "  - Finished in $runtime seconds"
+    echo "  - ${input} -> ${dir}/"
 }
 
 function run() {
@@ -101,13 +112,8 @@ function run() {
     _extract_frames
     _build_html
     _export_pdf
-    _report
 
-    end=`date +%s`
-    runtime=$((end-start))
-
-    echo
-    echo "Finished in $runtime seconds"
+    _report "${start}"
 }
 
 while getopts "h?i:f:r:c:" opt; do
