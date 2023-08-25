@@ -10,31 +10,28 @@ set -o errtrace
 timestamp=$(git log -n1 --date=unix --format="%ad")
 commit_hash=$(git log -n1 --format="%h")
 
-input="input.mov"
-input_basename=$(basename "$input")
+# Option defaults
 fps="4"
 rows="3"
 columns="2"
 
-dir="output/${timestamp}-${commit_hash}/${fps}-${rows}x${columns}-${input_basename}"
-
-function help() {
+function _help() {
     echo "\
-Make frames from video
+Make flipbook from video
 
 Usage:
-./make_frames.sh [-h] [-f fps] [-f path]
+./make.sh [-h] [-f fps] [-f path] [-r rows] [-c columns]
 
 Usage:
-./make_frames.sh                    Export all STLs
-./make_frames.sh -h                 Show this message and quit
-./make_frames.sh -i <path>          Set input file path (Default: input.mov)
-./make_frames.sh -f <fps>           Set frames/second (Default: ${fps})
-./make_frames.sh -r <rows>          Set panel rows/sheet (Default: ${rows})
-./make_frames.sh -c <columns>       Set panel columns/sheet (Default: ${columns})
+./make.sh                    Export all STLs
+./make.sh -h                 Show this message and quit
+./make.sh -i <input>         Set input file path (Required)
+./make.sh -f <fps>           Set frames/second (Default: ${fps})
+./make.sh -r <rows>          Set panel rows/sheet (Default: ${rows})
+./make.sh -c <columns>       Set panel columns/sheet (Default: ${columns})
 
 Examples:
-./make_frames.sh -f 2 -i path/to/file.mp4
+./make.sh -i path/to/file.mp4 -f 2
 "
 }
 
@@ -44,11 +41,6 @@ function _extract_frames() {
         -vf fps="${fps}" \
         -hide_banner -loglevel error \
         "${dir}/%04d.png"
-
-    # for filename in "${dir}"/*.png; do
-      # echo -i "$filename" -o "$filename.png"
-      # TODO: run processing
-    # done
 }
 
 function _build_html() {
@@ -91,16 +83,22 @@ function run() {
 
 while getopts "h?i:f:r:c:" opt; do
     case "$opt" in
-        h) help; exit ;;
+        h) _help; exit ;;
         i) input="$OPTARG" ;;
         f) fps="$OPTARG" ;;
         r) rows="$OPTARG" ;;
         c) columns="$OPTARG" ;;
-        *) help; exit ;;
+        *) echo; _help; exit ;;
     esac
 done
 
-# Remake output directory
+if [ -z "$input" ]; then
+    echo "ERROR: -i [input] is required"
+    echo
+    _help
+    exit
+fi
+
 input_basename=$(basename "$input")
 dir="output/${timestamp}-${commit_hash}/${fps}-${rows}x${columns}-${input_basename}"
 
