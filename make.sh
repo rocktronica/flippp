@@ -9,6 +9,7 @@ set -o errtrace
 # Constants
 timestamp=$(git log -n1 --date=unix --format="%ad")
 commit_hash=$(git log -n1 --format="%h")
+chrome="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 
 # Option defaults
 fps="4"
@@ -41,6 +42,8 @@ function _extract_frames() {
         -vf fps="${fps}" \
         -hide_banner -loglevel error \
         "${dir}/%04d.png"
+
+    echo
 }
 
 function _build_html() {
@@ -49,12 +52,38 @@ function _build_html() {
         --directory "$dir" \
         --rows "$rows" \
         --columns "$columns"
+
+    echo
+}
+
+function _export_pdf() {
+    echo "Export PDF"
+
+    echo "  - Starting server"
+    pushd "$dir" &> /dev/null
+    python3 -m http.server 9002 &> /dev/null &
+    pid=$!
+    popd &> /dev/null
+
+    echo "  - Server at PID ${pid}"
+    sleep 1
+
+    echo "  - \"Printing\" to PDF via Chrome"
+    "$chrome" \
+        --headless \
+        --print-to-pdf="$dir/output.pdf" \
+        "http://localhost:9002" \
+        2> /dev/null
+
+    echo "  - Stopping PID ${pid}"
+    { kill "${pid}" && wait "${pid}"; } 2>/dev/null
+
+    echo
 }
 
 function _report() {
     frame_count=$(ls -lR "$dir"/*.png | wc -l | xargs)
 
-    echo
     echo "Extracted ${frame_count} frames from ${input} into ${dir}"
 }
 
@@ -71,7 +100,7 @@ function run() {
 
     _extract_frames
     _build_html
-    # TODO: PDF output
+    _export_pdf
     _report
 
     end=`date +%s`
