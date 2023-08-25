@@ -59,6 +59,13 @@ function _build_html() {
         --columns "$columns"
 }
 
+function _report() {
+    frame_count=$(ls -lR "$dir"/*.png | wc -l | xargs)
+
+    echo
+    echo "Extracted ${frame_count} frames from ${input} into ${dir}"
+}
+
 function run() {
     mkdir -pv $dir 1> /dev/null
 
@@ -73,8 +80,7 @@ function run() {
     _extract_frames
     _build_html
     # TODO: PDF output
-
-    # TODO: report on panel count
+    _report
 
     end=`date +%s`
     runtime=$((end-start))
