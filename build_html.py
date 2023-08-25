@@ -6,6 +6,10 @@ import os
 import sys
 
 
+def get_page_count(panel_count, panels_per_page):
+    return math.ceil(panel_count / panels_per_page)
+
+
 def get_page_index(i, panels_per_page):
     return math.floor(i / panels_per_page)
 
@@ -13,7 +17,7 @@ def get_page_index(i, panels_per_page):
 # [1-18] ->  [1,4,7,10,13,16,2,5,8,11,14,17,3,6,9,12,15,18]
 def panelize(input, panels_per_page):
     output = []
-    page_count = math.ceil(len(input) / panels_per_page)
+    page_count = get_page_count(len(input), panels_per_page)
 
     for i in range(page_count * panels_per_page):
         page_index = get_page_index(i, panels_per_page)
@@ -40,14 +44,22 @@ def get_panels(directory, panels_per_page):
 
 
 def get_html(directory, rows, columns):
-    # TODO: send pages w/ child panels for print margin control
-    values = {
-        "panels": get_panels(directory, panels_per_page=rows * columns),
-        "rows": rows,
-        "columns": columns,
-    }
+    panels = get_panels(directory, rows * columns)
 
-    return chevron.render(template, values)
+    pages = []
+    for i in range(get_page_count(len(panels), rows * columns)):
+        pages.append(
+            {"panels": list(filter(lambda panel: panel.get("page") == i, panels))}
+        )
+
+    return chevron.render(
+        template,
+        {
+            "pages": pages,
+            "rows": rows,
+            "columns": columns,
+        },
+    )
 
 
 if __name__ == "__main__":

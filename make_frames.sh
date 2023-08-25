@@ -74,6 +74,8 @@ function run() {
     _build_html
     # TODO: PDF output
 
+    # TODO: report on panel count
+
     end=`date +%s`
     runtime=$((end-start))
 

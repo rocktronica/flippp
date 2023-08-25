@@ -23,11 +23,12 @@
             background: #eee;
         }
 
-        body {
+        .page {
             width: 8.5in;
             background: #fff;
             display: flex;
             flex-wrap: wrap;
+            margin: .25in auto;
         }
 
         .panel {
@@ -65,21 +66,29 @@
             html, .page {
                 background: none !important;
             }
+
+            .page {
+                margin: 0;
+            }
         }
     </style>
 </head>
 
 <body>
-    {{#panels}}
-        <div class="panel">
-            {{#filename}}
-                <div class="handle">
-                    {{filename}} | Page {{page}}
+    {{#pages}}
+        <div class="page">
+            {{#panels}}
+                <div class="panel">
+                    {{#filename}}
+                        <div class="handle">
+                            {{filename}} | Page {{page}}
+                        </div>
+                        <div class="content" style="background-image:url({{filename}})"></div>
+                    {{/filename}}
                 </div>
-                <div class="content" style="background-image:url({{filename}})"></div>
-            {{/filename}}
+            {{/panels}}
         </div>
-    {{/panels}}
+    {{/pages}}
 </body>
 
 </html>
