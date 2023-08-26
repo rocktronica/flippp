@@ -85,6 +85,8 @@ function _export_pdf() {
     echo "  - Stopping PID ${pid}"
     { kill "${pid}" && wait "${pid}"; } 2>/dev/null
 
+    # TODO: fix ^ preventing anything thereafter from being called
+
     echo
 }
 
