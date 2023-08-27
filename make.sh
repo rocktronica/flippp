@@ -20,6 +20,8 @@ columns="2"
 # Local variables, set later
 _dir=""
 _server_pid=""
+_frame_count=""
+_page_count=""
 
 function _help() {
     echo "\
@@ -49,9 +51,9 @@ function _extract_frames() {
         -hide_banner -loglevel error \
         "${_dir}/%04d.png"
 
-    frame_count=$(find "${_dir}"/*.png | wc -l | xargs)
+    _frame_count=$(find "${_dir}"/*.png | wc -l | xargs)
 
-    echo "  - ${frame_count} frames extracted"
+    echo "  - ${_frame_count} frames extracted"
 
     echo
 }
@@ -63,6 +65,9 @@ function _build_html() {
         --rows "$rows" \
         --columns "$columns"
     echo "  - Built to ${_dir}"
+
+    _page_count=$(echo "${_frame_count} / (${columns} * ${rows})" | bc)
+    echo "  - Expecting ${_page_count} page(s)"
 
     echo
 }

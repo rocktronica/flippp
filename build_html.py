@@ -74,6 +74,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--columns", type=int, default=2, help="# of panel columns per page"
     )
+    # TODO: parameterize handle/image size, panel order, image filter
     arguments = parser.parse_args()
 
     dir_path = os.path.dirname(os.path.realpath(__file__))
