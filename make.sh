@@ -16,6 +16,10 @@ fps="4"
 rows="3"
 columns="2"
 
+# Local variables, set later
+_dir=""
+_server_pid=""
+
 function _help() {
     echo "\
 Make flipbook from video
@@ -41,9 +45,9 @@ function _extract_frames() {
     ffmpeg -i "${input}" \
         -vf fps="${fps}" \
         -hide_banner -loglevel error \
-        "${dir}/%04d.png"
+        "${_dir}/%04d.png"
 
-    frame_count=$(ls -lR "$dir"/*.png | wc -l | xargs)
+    frame_count=$(ls -lR "${_dir}"/*.png | wc -l | xargs)
 
     echo "  - ${frame_count} frames extracted"
 
@@ -53,10 +57,10 @@ function _extract_frames() {
 function _build_html() {
     echo "Building HTML"
     python3 build_html.py \
-        --directory "$dir" \
+        --directory "${_dir}" \
         --rows "$rows" \
         --columns "$columns"
-    echo "  - Built to ${dir}"
+    echo "  - Built to ${_dir}"
 
     echo
 }
@@ -65,27 +69,25 @@ function _export_pdf() {
     echo "Export PDF"
 
     echo "  - Starting server"
-    pushd "$dir" &> /dev/null
+    pushd "${_dir}" &> /dev/null
     python3 -m http.server 9002 &> /dev/null &
-    pid=$!
+    _server_pid=$!
     popd &> /dev/null
 
-    echo "  - Server at PID ${pid}"
+    echo "  - Server at PID ${_server_pid}"
     sleep 1
 
     echo "  - \"Printing\" to PDF via Chrome"
     "$chrome" \
         --headless \
-        --print-to-pdf="$dir/output.pdf" \
+        --print-to-pdf="${_dir}/output.pdf" \
         "http://localhost:9002" \
         2> /dev/null
 
-    echo "  - PDF at $dir/output.pdf"
+    echo "  - PDF at ${_dir}/output.pdf"
 
-    echo "  - Stopping PID ${pid}"
-    { kill "${pid}" && wait "${pid}"; } 2>/dev/null
-
-    # TODO: fix ^ preventing anything thereafter from being called
+    echo "  - Stopping PID ${_server_pid}"
+    kill "${_server_pid}"
 
     echo
 }
@@ -97,11 +99,11 @@ function _report() {
 
     echo "Done!"
     echo "  - Finished in $runtime seconds"
-    echo "  - ${input} -> ${dir}/"
+    echo "  - ${input} -> ${_dir}/"
 }
 
 function run() {
-    mkdir -pv $dir 1> /dev/null
+    mkdir -pv "${_dir}" 1> /dev/null
 
     function finish() {
         # Kill descendent processes
@@ -116,6 +118,8 @@ function run() {
     _export_pdf
 
     _report "${start}"
+
+    wait "${_server_pid}" 2>/dev/null
 }
 
 while getopts "h?i:f:r:c:" opt; do
@@ -136,8 +140,8 @@ if [ -z "$input" ]; then
     exit
 fi
 
-input_basename=$(basename "$input")
-dir="output/${timestamp}-${commit_hash}/${fps}-${rows}x${columns}-${input_basename}"
+# Set output directory after all dependent options have been set
+_dir="output/${timestamp}-${commit_hash}/${fps}-${rows}x${columns}-$(basename "$input")"
 
 run "${query[@]}"
 
