@@ -12,6 +12,7 @@ commit_hash=$(git log -n1 --format="%h")
 chrome="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 
 # Option defaults
+output="output.pdf"
 fps="4"
 rows="3"
 columns="2"
@@ -31,6 +32,7 @@ Usage:
 ./make.sh                    Export all STLs
 ./make.sh -h                 Show this message and quit
 ./make.sh -i <input>         Set input file path (Required)
+./make.sh -o <output>        Set output PDF file path (Default: ${output})
 ./make.sh -f <fps>           Set frames/second (Default: ${fps})
 ./make.sh -r <rows>          Set panel rows/sheet (Default: ${rows})
 ./make.sh -c <columns>       Set panel columns/sheet (Default: ${columns})
@@ -80,11 +82,11 @@ function _export_pdf() {
     echo "  - \"Printing\" to PDF via Chrome"
     "$chrome" \
         --headless \
-        --print-to-pdf="${_dir}/output.pdf" \
+        --print-to-pdf="${_dir}/${output}" \
         "http://localhost:9002" \
         2> /dev/null
 
-    echo "  - PDF at ${_dir}/output.pdf"
+    echo "  - PDF at ${_dir}/${output}"
 
     echo "  - Stopping PID ${_server_pid}"
     kill "${_server_pid}"
@@ -122,10 +124,11 @@ function run() {
     wait "${_server_pid}" 2>/dev/null
 }
 
-while getopts "h?i:f:r:c:" opt; do
+while getopts "h?i:o:f:r:c:" opt; do
     case "$opt" in
         h) _help; exit ;;
         i) input="$OPTARG" ;;
+        o) output="$OPTARG" ;;
         f) fps="$OPTARG" ;;
         r) rows="$OPTARG" ;;
         c) columns="$OPTARG" ;;
