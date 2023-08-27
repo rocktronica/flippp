@@ -49,7 +49,7 @@ function _extract_frames() {
         -hide_banner -loglevel error \
         "${_dir}/%04d.png"
 
-    frame_count=$(ls -lR "${_dir}"/*.png | wc -l | xargs)
+    frame_count=$(find "${_dir}"/*.png | wc -l | xargs)
 
     echo "  - ${frame_count} frames extracted"
 
@@ -96,7 +96,7 @@ function _export_pdf() {
 
 function _report() {
     start="$1"
-    end=`date +%s`
+    end=$(date +%s)
     runtime=$((end-start))
 
     echo "Done!"
@@ -113,7 +113,7 @@ function run() {
     }
     trap finish EXIT
 
-    start=`date +%s`
+    start=$(date +%s)
 
     _extract_frames
     _build_html
@@ -146,6 +146,6 @@ fi
 # Set output directory after all dependent options have been set
 _dir="output/${timestamp}-${commit_hash}/${fps}-${rows}x${columns}-$(basename "$input")"
 
-run "${query[@]}"
+run
 
 }
