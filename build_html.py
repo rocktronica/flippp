@@ -43,7 +43,7 @@ def get_panels(directory, panels_per_page):
     ]
 
 
-def get_html(directory, rows, columns):
+def get_html(directory, rows, columns, page_width, page_height):
     panels = get_panels(directory, rows * columns)
 
     pages = []
@@ -54,10 +54,13 @@ def get_html(directory, rows, columns):
 
     return chevron.render(
         template,
+        # TODO: tidy
         {
             "pages": pages,
             "rows": rows,
             "columns": columns,
+            "page_width": page_width,
+            "page_height": page_height,
         },
     )
 
@@ -70,17 +73,28 @@ if __name__ == "__main__":
         required=True,
         help="path to images' folder",
     )
-    parser.add_argument("--rows", type=int, default=3, help="# of panel rows per page")
+
+    parser.add_argument("--rows", type=int, default=3, help="Panel rows per page")
+    parser.add_argument("--columns", type=int, default=2, help="Panel columns per page")
+
     parser.add_argument(
-        "--columns", type=int, default=2, help="# of panel columns per page"
+        "--orientation",
+        type=str,
+        default="portrait",
+        help="Print orientation: 'portrait' (default) or 'landscape'",
     )
+
     # TODO: parameterize handle/image size, panel order, image filter
+
     arguments = parser.parse_args()
 
     dir_path = os.path.dirname(os.path.realpath(__file__))
 
     if not os.path.isdir(arguments.directory):
         sys.exit("ERROR: " + arguments.directory + " directory does not exist")
+
+    if arguments.orientation not in ["portrait", "landscape"]:
+        sys.exit("ERROR: invalid --orientation " + arguments.orientation)
 
     with open(dir_path + "/template.mustache", "r") as template:
         output = open(arguments.directory + "/index.html", "w")
@@ -89,6 +103,8 @@ if __name__ == "__main__":
                 directory=arguments.directory,
                 rows=arguments.rows,
                 columns=arguments.columns,
+                page_width="8.5in" if arguments.orientation == "portrait" else "11in",
+                page_height="11in" if arguments.orientation == "portrait" else "8.5in",
             )
         )
         output.close()

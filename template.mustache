@@ -16,7 +16,7 @@
             margin: 0;
             padding: 0;
 
-            size: 8.5in 11in;
+            size: {{page_width}} {{page_height}};
         }
 
         html {
@@ -24,7 +24,7 @@
         }
 
         .page {
-            width: 8.5in;
+            width: {{page_width}};
             background: #fff;
             display: flex;
             flex-wrap: wrap;
@@ -32,8 +32,8 @@
         }
 
         .panel {
-            width: calc(8.5in / {{columns}});
-            height: calc(11in / {{rows}});
+            width: calc({{page_width}} / {{columns}});
+            height: calc({{page_height}} / {{rows}});
 
             padding: .25in;
 
@@ -52,8 +52,8 @@
 
         .content {
             /* TODO: tidy, fix against portrait/landscape */
-            width: calc((11in - .25in * {{rows}} * 2) / {{rows}});
-            height: calc((11in - .25in * {{rows}} * 2) / {{rows}});
+            width: calc(({{page_height}} - .25in * {{rows}} * 2) / {{rows}});
+            height: calc(({{page_height}} - .25in * {{rows}} * 2) / {{rows}});
 
             background-size: cover;
             background-repeat: no-repeat;

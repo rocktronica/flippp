@@ -16,6 +16,7 @@ output="output.pdf"
 fps="4"
 rows="3"
 columns="2"
+print_orientation="portrait"
 
 # Local variables, set later
 _dir=""
@@ -31,13 +32,14 @@ Usage:
 ./make.sh [-h] [-f fps] [-f path] [-r rows] [-c columns]
 
 Usage:
-./make.sh                    Export all STLs
+./make.sh                    Run!
 ./make.sh -h                 Show this message and quit
-./make.sh -i <input>         Set input file path (Required)
-./make.sh -o <output>        Set output PDF file path (Default: ${output})
-./make.sh -f <fps>           Set frames/second (Default: ${fps})
-./make.sh -r <rows>          Set panel rows/sheet (Default: ${rows})
-./make.sh -c <columns>       Set panel columns/sheet (Default: ${columns})
+./make.sh -i <input>         Input file path (Required)
+./make.sh -o <output>        Output PDF file path (Default: ${output})
+./make.sh -f <fps>           Frames/second (Default: ${fps})
+./make.sh -r <rows>          Panel rows/sheet (Default: ${rows})
+./make.sh -c <columns>       Panel columns/sheet (Default: ${columns})
+./make.sh -p <print>         Print orientation (Default: ${print_orientation})
 
 Examples:
 ./make.sh -i path/to/file.mp4 -f 2
@@ -62,8 +64,9 @@ function _build_html() {
     echo "Building HTML"
     python3 build_html.py \
         --directory "${_dir}" \
-        --rows "$rows" \
-        --columns "$columns"
+        --rows "${rows}" \
+        --columns "${columns}" \
+        --orientation "${print_orientation}"
     echo "  - Built to ${_dir}"
 
     _page_count=$(echo "${_frame_count} / (${columns} * ${rows})" | bc)
@@ -129,7 +132,7 @@ function run() {
     wait "${_server_pid}" 2>/dev/null
 }
 
-while getopts "h?i:o:f:r:c:" opt; do
+while getopts "h?i:o:f:r:c:p:" opt; do
     case "$opt" in
         h) _help; exit ;;
         i) input="$OPTARG" ;;
@@ -137,6 +140,7 @@ while getopts "h?i:o:f:r:c:" opt; do
         f) fps="$OPTARG" ;;
         r) rows="$OPTARG" ;;
         c) columns="$OPTARG" ;;
+        p) print_orientation="$OPTARG" ;;
         *) echo; _help; exit ;;
     esac
 done
@@ -149,7 +153,9 @@ if [ -z "$input" ]; then
 fi
 
 # Set output directory after all dependent options have been set
-_dir="output/${timestamp}-${commit_hash}/${fps}-${rows}x${columns}-$(basename "$input")"
+_dir="output/\
+${timestamp}-${commit_hash}/\
+${fps}-${rows}x${columns}-${print_orientation}-$(basename "$input")"
 
 run
 
