@@ -80,8 +80,8 @@ if __name__ == "__main__":
     parser.add_argument(
         "--orientation",
         type=str,
-        default="portrait",
-        help="Print orientation: 'portrait' (default) or 'landscape'",
+        default="landscape",
+        help="Print orientation: 'landscape' (default) or 'portrait'",
     )
 
     # TODO: parameterize handle/image size, panel order, image filter

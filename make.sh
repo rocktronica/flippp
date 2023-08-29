@@ -16,7 +16,7 @@ output="output.pdf"
 fps="4"
 rows="3"
 columns="2"
-print_orientation="portrait"
+print_orientation="landscape"
 
 # Local variables, set later
 _dir=""
@@ -69,6 +69,7 @@ function _build_html() {
         --orientation "${print_orientation}"
     echo "  - Built to ${_dir}"
 
+    # TODO: fix math, hehe
     _page_count=$(echo "${_frame_count} / (${columns} * ${rows})" | bc)
     echo "  - Expecting ${_page_count} page(s)"
 

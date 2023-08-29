@@ -44,18 +44,16 @@
         }
 
         .handle {
-            width: .5in;
-            min-width: .5in;
+            width: 1in;
+            min-width: 1in;
             font-family: monospace;
             writing-mode: vertical-lr;
         }
 
         .content {
-            /* TODO: tidy, fix against portrait/landscape */
-            width: calc(({{page_height}} - .25in * {{rows}} * 2) / {{rows}});
-            height: calc(({{page_height}} - .25in * {{rows}} * 2) / {{rows}});
+            flex: 1;
 
-            background-size: cover;
+            background-size: contain;
             background-repeat: no-repeat;
             background-position: center center;
 
