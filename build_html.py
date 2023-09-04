@@ -43,7 +43,7 @@ def get_panels(directory, panels_per_page):
     ]
 
 
-def get_html(directory, rows, columns, page_width, page_height):
+def get_html(directory, rows, columns, orientation, page_width, page_height):
     panels = get_panels(directory, rows * columns)
 
     pages = []
@@ -55,10 +55,12 @@ def get_html(directory, rows, columns, page_width, page_height):
     return chevron.render(
         template,
         # TODO: tidy
+        # TODO: decouple handle position from is_portrait
         {
             "pages": pages,
             "rows": rows,
             "columns": columns,
+            "is_portrait": orientation == "portrait",
             "page_width": page_width,
             "page_height": page_height,
         },
@@ -74,8 +76,9 @@ if __name__ == "__main__":
         help="path to images' folder",
     )
 
+    # TODO: DRY against make.sh
     parser.add_argument("--rows", type=int, default=3, help="Panel rows per page")
-    parser.add_argument("--columns", type=int, default=2, help="Panel columns per page")
+    parser.add_argument("--columns", type=int, default=3, help="Panel columns per page")
 
     parser.add_argument(
         "--orientation",
@@ -103,6 +106,7 @@ if __name__ == "__main__":
                 directory=arguments.directory,
                 rows=arguments.rows,
                 columns=arguments.columns,
+                orientation=arguments.orientation,
                 page_width="8.5in" if arguments.orientation == "portrait" else "11in",
                 page_height="11in" if arguments.orientation == "portrait" else "8.5in",
             )

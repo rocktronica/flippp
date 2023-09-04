@@ -41,13 +41,28 @@
 
             display: flex;
             justify-content: space-between;
+
+            /* TODO: decouple handle position from is_portrait */
+            {{#is_portrait}}
+                flex-direction: column;
+            {{/is_portrait}}{{^is_portrait}}
+                flex-direction: row;
+            {{/is_portrait}}
+
         }
 
         .handle {
-            width: 1in;
-            min-width: 1in;
             font-family: monospace;
-            writing-mode: vertical-lr;
+
+            /* TODO: decouple handle position from is_portrait */
+            {{#is_portrait}}
+                height: .5in;
+                min-height: .5in;
+            {{/is_portrait}}{{^is_portrait}}
+                width: .5in;
+                min-width: .5in;
+                writing-mode: vertical-lr;
+            {{/is_portrait}}
         }
 
         .content {

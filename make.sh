@@ -12,6 +12,7 @@ commit_hash=$(git log -n1 --format="%h")
 chrome="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 
 # Option defaults
+# TODO: DRY against built_html.py
 output="output.pdf"
 fps="4"
 rows="3"
