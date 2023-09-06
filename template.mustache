@@ -25,8 +25,11 @@
 
         .page {
             width: {{page_width}};
-            display: flex;
-            flex-wrap: wrap;
+            height: {{page_height}};
+
+            display: grid;
+            grid-template-columns: repeat({{columns}}, auto);
+            grid-template-rows: repeat({{rows}}, auto);
 
             /* For screen display only */
             background: #fff;
@@ -38,8 +41,6 @@
 
         .panel {
             /* TODO: extract and parameterize */
-            width: calc(({{page_width}} - .25in * 2) / {{columns}});
-            height: calc(({{page_height}} - .25in * 2) / {{rows}});
             padding: calc(.25in / 4);
 
             /* For screen display only */
