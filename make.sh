@@ -15,9 +15,9 @@ chrome="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 # TODO: DRY against built_html.py
 output="output.pdf"
 fps="4"
-rows="4"
-columns="3"
-print_orientation="landscape"
+rows="5"
+columns="2"
+print_orientation="portrait"
 
 # Local variables, set later
 _dir=""

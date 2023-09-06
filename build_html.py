@@ -64,12 +64,11 @@ def get_html(
     return chevron.render(
         template,
         # TODO: tidy
-        # TODO: decouple handle position from is_portrait
         {
             "pages": pages,
             "rows": rows,
             "columns": columns,
-            "is_portrait": orientation == "portrait",
+            "handle_on_top": orientation == "landscape",
             "page_width": page_width,
             "page_height": page_height,
             "page_padding": page_padding,
@@ -88,17 +87,15 @@ if __name__ == "__main__":
     )
 
     # TODO: DRY against make.sh
-    parser.add_argument("--rows", type=int, default=3, help="Panel rows per page")
-    parser.add_argument("--columns", type=int, default=3, help="Panel columns per page")
-
     parser.add_argument(
         "--orientation",
         type=str,
-        default="landscape",
-        help="Print orientation: 'landscape' (default) or 'portrait'",
+        default="portrait",
+        help="Print orientation: 'landscape' or 'portrait' (default)",
     )
-
-    parser.add_argument("--page_padding", type=str, default=".25in")
+    parser.add_argument("--rows", type=int, default=5, help="Panel rows per page")
+    parser.add_argument("--columns", type=int, default=2, help="Panel columns per page")
+    parser.add_argument("--page_padding", type=str, default=".5in .75in")
     parser.add_argument("--panel_padding", type=str, default=".0625in")
 
     # TODO: parameterize handle/image size, panel order, image filter

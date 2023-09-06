@@ -47,27 +47,25 @@
             display: flex;
             justify-content: space-between;
 
-            /* TODO: decouple handle position from is_portrait */
-            {{#is_portrait}}
+            {{#handle_on_top}}
                 flex-direction: column;
-            {{/is_portrait}}{{^is_portrait}}
+            {{/handle_on_top}}{{^handle_on_top}}
                 flex-direction: row;
-            {{/is_portrait}}
+            {{/handle_on_top}}
 
         }
 
         .handle {
             font-family: monospace;
 
-            /* TODO: decouple handle position from is_portrait */
-            {{#is_portrait}}
+            {{#handle_on_top}}
                 height: 1in;
                 min-height: 1in;
-            {{/is_portrait}}{{^is_portrait}}
+            {{/handle_on_top}}{{^handle_on_top}}
                 width: 1in;
                 min-width: 1in;
                 writing-mode: vertical-lr;
-            {{/is_portrait}}
+            {{/handle_on_top}}
         }
 
         .content {
