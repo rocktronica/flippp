@@ -43,7 +43,16 @@ def get_panels(directory, panels_per_page):
     ]
 
 
-def get_html(directory, rows, columns, orientation, page_width, page_height):
+def get_html(
+    directory,
+    rows,
+    columns,
+    orientation,
+    page_width,
+    page_height,
+    page_padding,
+    panel_padding,
+):
     panels = get_panels(directory, rows * columns)
 
     pages = []
@@ -63,6 +72,8 @@ def get_html(directory, rows, columns, orientation, page_width, page_height):
             "is_portrait": orientation == "portrait",
             "page_width": page_width,
             "page_height": page_height,
+            "page_padding": page_padding,
+            "panel_padding": panel_padding,
         },
     )
 
@@ -87,6 +98,9 @@ if __name__ == "__main__":
         help="Print orientation: 'landscape' (default) or 'portrait'",
     )
 
+    parser.add_argument("--page_padding", type=str, default=".25in")
+    parser.add_argument("--panel_padding", type=str, default=".0625in")
+
     # TODO: parameterize handle/image size, panel order, image filter
 
     arguments = parser.parse_args()
@@ -109,6 +123,8 @@ if __name__ == "__main__":
                 orientation=arguments.orientation,
                 page_width="8.5in" if arguments.orientation == "portrait" else "11in",
                 page_height="11in" if arguments.orientation == "portrait" else "8.5in",
+                page_padding=arguments.page_padding,
+                panel_padding=arguments.panel_padding,
             )
         )
         output.close()
