@@ -52,6 +52,8 @@ def get_html(
     page_height,
     page_padding,
     panel_padding,
+    crop,
+    image_filter,
 ):
     panels = get_panels(directory, rows * columns)
 
@@ -73,6 +75,8 @@ def get_html(
             "page_height": page_height,
             "page_padding": page_padding,
             "panel_padding": panel_padding,
+            "crop": crop,
+            "image_filter": image_filter,
         },
     )
 
@@ -97,8 +101,10 @@ if __name__ == "__main__":
     parser.add_argument("--columns", type=int, default=2, help="Panel columns per page")
     parser.add_argument("--page_padding", type=str, default=".5in .75in")
     parser.add_argument("--panel_padding", type=str, default=".0625in")
+    parser.add_argument("--crop", type=bool, default=True)
+    parser.add_argument("--image_filter", type=str, default="")
 
-    # TODO: parameterize handle/image size, panel order, image filter
+    # TODO: parameterize handle/image size, panel order
 
     arguments = parser.parse_args()
 
@@ -122,6 +128,8 @@ if __name__ == "__main__":
                 page_height="11in" if arguments.orientation == "portrait" else "8.5in",
                 page_padding=arguments.page_padding,
                 panel_padding=arguments.panel_padding,
+                crop=arguments.crop,
+                image_filter=arguments.image_filter,
             )
         )
         output.close()

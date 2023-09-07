@@ -71,12 +71,13 @@
         .content {
             flex: 1;
 
-            background-size: contain;
+            background-size:
+                {{#crop}}cover{{/crop}}
+                {{^crop}}contain{{/crop}};
             background-repeat: no-repeat;
             background-position: center center;
 
-            /* TODO: extract and parameterize */
-            filter: contrast(120%) brightness(200%);
+            filter: {{image_filter}};
         }
 
         @media print {
