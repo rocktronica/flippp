@@ -104,7 +104,7 @@ if __name__ == "__main__":
     parser.add_argument("--crop", type=bool, default=True)
     parser.add_argument("--image_filter", type=str, default="")
 
-    # TODO: parameterize handle/image size, panel order
+    # TODO: parameterize handle/image size, panel order, double-sided
 
     arguments = parser.parse_args()
 
