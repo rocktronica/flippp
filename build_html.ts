@@ -11,8 +11,6 @@ const getPageCount = (panelCount: number, panelsPerPage: number) =>
 const getPageIndex = (i: number, panelsPerPage: number) =>
   Math.floor(i / panelsPerPage);
 
-const EMPTY_PANEL = { filename: undefined, page: -1 };
-
 // [1-18] ->  [1,4,7,10,13,16,2,5,8,11,14,17,3,6,9,12,15,18]
 const panelize = (
   // deno-lint-ignore no-explicit-any
@@ -28,11 +26,8 @@ const panelize = (
     const panelIndex = i % panelsPerPage;
     const inputIndex = panelIndex * pageCount + pageIndex;
 
-    // TODO: this seems not good/right
     output.push(
-      inputIndex <= input.length
-        ? input[inputIndex] || EMPTY_PANEL
-        : EMPTY_PANEL,
+      inputIndex <= input.length ? input[inputIndex] : undefined,
     );
   }
 
@@ -51,7 +46,10 @@ const getPanels: any[any] = async (
     }
   }
 
-  return filenames.sort().map((filename, i) => ({
+  return panelize(filenames.sort(), panelsPerPage).map((
+    filename: string,
+    i: number,
+  ) => ({
     filename,
     page: getPageIndex(i, panelsPerPage),
   }));
@@ -71,10 +69,7 @@ const getHtml = async (
   crop = flags.crop || true,
   imageFilter = flags.imageFilter || "",
 ) => {
-  const panels = panelize(
-    await getPanels(directory, rows * columns),
-    rows * columns,
-  );
+  const panels = await getPanels(directory, rows * columns);
 
   // deno-lint-ignore no-explicit-any
   const pages: any[any] = [];
