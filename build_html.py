@@ -117,7 +117,7 @@ if __name__ == "__main__":
         sys.exit("ERROR: invalid --orientation " + arguments.orientation)
 
     with open(dir_path + "/template.mustache", "r") as template:
-        output = open(arguments.directory + "/index.html", "w")
+        output = open(arguments.directory + "/index-py.html", "w")
         output.write(
             get_html(
                 directory=arguments.directory,
