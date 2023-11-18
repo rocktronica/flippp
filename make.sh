@@ -64,12 +64,6 @@ function _extract_frames() {
 function _build_html() {
     echo "Building HTML"
 
-    python3 build_html.py \
-        --directory "${_dir}" \
-        --rows "${rows}" \
-        --columns "${columns}" \
-        --orientation "${print_orientation}"
-
     deno run --allow-read --allow-write build_html.ts \
         --directory "${_dir}" \
         --rows "${rows}" \

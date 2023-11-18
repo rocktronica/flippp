@@ -93,6 +93,6 @@ const getHtml = async (
 };
 
 await Deno.writeTextFile(
-  flags.directory + "/index-ts.html",
+  flags.directory + "/index.html",
   await getHtml(flags.directory),
 );
