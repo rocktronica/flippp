@@ -73,7 +73,7 @@ const getHtml = async (
 
   // deno-lint-ignore no-explicit-any
   const pages: any[any] = [];
-  for (const i in range(0, getPageCount(panels.length, rows * columns) - 1)) {
+  for (const i in range(0, getPageCount(panels.length, rows * columns))) {
     // deno-lint-ignore no-explicit-any
     pages.push({ panels: panels.filter((panel: any) => panel.page == i) });
   }
