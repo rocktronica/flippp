@@ -3,7 +3,14 @@ import { parse } from "https://deno.land/std@0.202.0/flags/mod.ts";
 import { range } from "https://deno.land/x/lodash@4.17.15-es/lodash.js";
 import { renderFile } from "https://deno.land/x/mustache@v0.3.0/mod.ts";
 
-// TODO: fix no-explicit-any
+interface Panel {
+  filename: string | undefined;
+  page: number;
+}
+
+interface Page {
+  panels: Panel[];
+}
 
 const getPageCount = (panelCount: number, panelsPerPage: number) =>
   Math.ceil(panelCount / panelsPerPage);
@@ -11,17 +18,14 @@ const getPageCount = (panelCount: number, panelsPerPage: number) =>
 const getPageIndex = (i: number, panelsPerPage: number) =>
   Math.floor(i / panelsPerPage);
 
-// [1-18] ->  [1,4,7,10,13,16,2,5,8,11,14,17,3,6,9,12,15,18]
 const panelize = (
-  // deno-lint-ignore no-explicit-any
-  input: any[any],
+  input: string[],
   panelsPerPage: number,
-) => {
-  // deno-lint-ignore no-explicit-any
-  const output: any[any] = [];
+): (string | undefined)[] => {
+  const output: (string | undefined)[] = [];
   const pageCount = getPageCount(input.length, panelsPerPage);
 
-  for (const i in range(0, pageCount * panelsPerPage - 1)) {
+  range(0, pageCount * panelsPerPage).forEach((i: number) => {
     const pageIndex = getPageIndex(i, panelsPerPage);
     const panelIndex = i % panelsPerPage;
     const inputIndex = panelIndex * pageCount + pageIndex;
@@ -29,16 +33,15 @@ const panelize = (
     output.push(
       inputIndex <= input.length ? input[inputIndex] : undefined,
     );
-  }
+  });
 
   return output;
 };
 
-// deno-lint-ignore no-explicit-any
-const getPanels: any[any] = async (
+const getPanels = async (
   directory: string,
   panelsPerPage: number,
-) => {
+): Promise<Panel[]> => {
   const filenames: string[] = [];
   for await (const dirEntry of Deno.readDir(directory)) {
     if (fileExtension(dirEntry.name) == "png") {
@@ -47,7 +50,7 @@ const getPanels: any[any] = async (
   }
 
   return panelize(filenames.sort(), panelsPerPage).map((
-    filename: string,
+    filename: string | undefined,
     i: number,
   ) => ({
     filename,
@@ -55,44 +58,57 @@ const getPanels: any[any] = async (
   }));
 };
 
-const flags = parse(Deno.args);
-
 const getHtml = async (
   directory: string,
-  rows = flags.rows || 5,
-  columns = flags.columns || 2,
-  orientation: "landscape" | "portrait" = flags.orientation || "portrait",
-  pageWidth = flags.pageWidth || "8.5in",
-  pageHeight = flags.pageHeight || "11in",
-  pagePadding = flags.pagePadding || ".5in .75in",
-  panelPadding = flags.panelPadding || ".0625in",
-  crop = flags.crop || true,
-  imageFilter = flags.imageFilter || "",
+  options: {
+    rows: number;
+    columns: number;
+    orientation: string;
+    pageWidth: string;
+    pageHeight: string;
+    pagePadding: string;
+    panelPadding: string;
+    crop: true;
+    imageFilter: string;
+  },
 ) => {
-  const panels = await getPanels(directory, rows * columns);
+  const panels = await getPanels(directory, options.rows * options.columns);
 
-  // deno-lint-ignore no-explicit-any
-  const pages: any[any] = [];
-  for (const i in range(0, getPageCount(panels.length, rows * columns))) {
-    // deno-lint-ignore no-explicit-any
-    pages.push({ panels: panels.filter((panel: any) => panel.page == i) });
-  }
+  const pages: Page[] = [];
+  range(0, getPageCount(panels.length, options.rows * options.columns)).forEach(
+    (i: number) => {
+      pages.push({ panels: panels.filter((panel: Panel) => panel.page == i) });
+    },
+  );
 
   return await renderFile("template.mustache", {
     pages,
-    rows,
-    columns,
-    "handle_on_top": orientation == "landscape",
-    "page_width": pageWidth,
-    "page_height": pageHeight,
-    "page_padding": pagePadding,
-    "panel_padding": panelPadding,
-    crop,
-    "image_filter": imageFilter,
+    "rows": options.rows,
+    "columns": options.columns,
+    "handle_on_top": options.orientation == "landscape",
+    "page_width": options.pageWidth,
+    "page_height": options.pageHeight,
+    "page_padding": options.pagePadding,
+    "panel_padding": options.panelPadding,
+    "crop": options.crop,
+    "image_filter": options.imageFilter,
   });
 };
 
+const flags = parse(Deno.args);
 await Deno.writeTextFile(
   flags.directory + "/index.html",
-  await getHtml(flags.directory),
+  await getHtml(flags.directory, {
+    rows: 5,
+    columns: 2,
+    orientation: "portrait",
+    pageWidth: "8.5in",
+    pageHeight: "11in",
+    pagePadding: ".5in .75in",
+    panelPadding: ".0625in",
+    crop: true,
+    imageFilter: "",
+
+    ...flags,
+  }),
 );
