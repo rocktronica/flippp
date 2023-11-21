@@ -49,27 +49,15 @@
 
             display: flex;
             justify-content: space-between;
-
-            /* TODO: ditch */
-            {{#handle_on_top}}
-                flex-direction: column;
-            {{/handle_on_top}}{{^handle_on_top}}
-                flex-direction: row;
-            {{/handle_on_top}}
-
+            flex-direction: row;
         }
 
         .handle {
             font-family: monospace;
 
-            {{#handle_on_top}}
-                height: 1.5in;
-                min-height: 1.5in;
-            {{/handle_on_top}}{{^handle_on_top}}
-                width: 1.5in;
-                min-width: 1.5in;
-                writing-mode: vertical-lr;
-            {{/handle_on_top}}
+            width: 1.5in;
+            min-width: 1.5in;
+            writing-mode: vertical-lr;
         }
 
         .content {

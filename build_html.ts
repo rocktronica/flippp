@@ -65,7 +65,6 @@ const getHtml = async (
   options: {
     rows: number;
     columns: number;
-    orientation: string; // TODO: ditch, rely on page dimensions instead
     pageWidth: string;
     pageHeight: string;
     pagePadding: string;
@@ -87,7 +86,6 @@ const getHtml = async (
     pages,
     "rows": options.rows,
     "columns": options.columns,
-    "handle_on_top": options.orientation == "landscape",
     "page_width": options.pageWidth,
     "page_height": options.pageHeight,
     "page_padding": options.pagePadding,
@@ -104,7 +102,6 @@ await Deno.writeTextFile(
   await getHtml(flags.directory, {
     rows: 5,
     columns: 2,
-    orientation: "portrait",
     pageWidth: "8.5in",
     pageHeight: "11in",
     pagePadding: ".5in .75in",
