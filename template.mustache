@@ -3,7 +3,10 @@
 
 <head>
     <meta charset="utf-8" />
-    <title>desiwalk</title>
+    <title>
+        flippp
+        {{! TODO: filename }}
+    </title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style>
         * {
@@ -47,6 +50,7 @@
             display: flex;
             justify-content: space-between;
 
+            /* TODO: ditch */
             {{#handle_on_top}}
                 flex-direction: column;
             {{/handle_on_top}}{{^handle_on_top}}
@@ -75,7 +79,7 @@
                 {{#crop}}cover{{/crop}}
                 {{^crop}}contain{{/crop}};
             background-repeat: no-repeat;
-            background-position: center center;
+            background-position: center center; /* TODO: parameterize */
 
             filter: {{image_filter}};
         }

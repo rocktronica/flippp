@@ -7,12 +7,14 @@ set -o errexit
 set -o errtrace
 
 # Constants
+# TODO: timestamp of build, not code
 timestamp=$(git log -n1 --date=unix --format="%ad")
 commit_hash=$(git log -n1 --format="%h")
 chrome="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 
 # Option defaults
 # TODO: DRY against built_html.py
+# TODO: directory ID as PDF filename
 output="output.pdf"
 fps="4"
 rows="5"
@@ -91,6 +93,7 @@ function _export_pdf() {
     echo "  - Server at PID ${_server_pid}"
     sleep 1
 
+    # TODO: use puppeteer, ditch PID stuff
     echo "  - \"Printing\" to PDF via Chrome"
     "$chrome" \
         --headless \

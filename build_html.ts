@@ -41,6 +41,7 @@ const panelize = (
 const getPanels = async (
   directory: string,
   panelsPerPage: number,
+  // TODO: flyleaves
 ): Promise<Panel[]> => {
   const filenames: string[] = [];
   for await (const dirEntry of Deno.readDir(directory)) {
@@ -49,6 +50,7 @@ const getPanels = async (
     }
   }
 
+  // TODO: parameterize order
   return panelize(filenames.sort(), panelsPerPage).map((
     filename: string | undefined,
     i: number,
@@ -63,11 +65,11 @@ const getHtml = async (
   options: {
     rows: number;
     columns: number;
-    orientation: string;
+    orientation: string; // TODO: ditch, rely on page dimensions instead
     pageWidth: string;
     pageHeight: string;
     pagePadding: string;
-    panelPadding: string;
+    panelPadding: string; // TODO: ditch, allow for custom image content size instead
     crop: true;
     imageFilter: string;
   },
@@ -97,6 +99,7 @@ const getHtml = async (
 
 const flags = parse(Deno.args);
 await Deno.writeTextFile(
+  // TODO: parameterize?
   flags.directory + "/index.html",
   await getHtml(flags.directory, {
     rows: 5,
@@ -107,7 +110,7 @@ await Deno.writeTextFile(
     pagePadding: ".5in .75in",
     panelPadding: ".0625in",
     crop: true,
-    imageFilter: "",
+    imageFilter: "none",
 
     ...flags,
   }),
