@@ -19,7 +19,7 @@
             margin: 0;
             padding: 0;
 
-            size: {{page_width}} {{page_height}};
+            size: {{pageWidth}} {{pageHeight}};
         }
 
         html {
@@ -27,8 +27,8 @@
         }
 
         .page {
-            width: {{page_width}};
-            height: {{page_height}};
+            width: {{pageWidth}};
+            height: {{pageHeight}};
 
             display: grid;
             grid-template-columns: repeat({{columns}}, minmax(0, 1fr));
@@ -38,7 +38,7 @@
             background: #fff;
             margin: .5in auto;
 
-            padding: {{page_padding}};
+            padding: {{pagePadding}};
         }
 
         .panel {
@@ -52,7 +52,7 @@
 
         .handle {
             font-family: monospace;
-            padding: {{handle_padding}};
+            padding: {{handlePadding}};
             writing-mode: vertical-lr;
         }
 
@@ -61,13 +61,13 @@
                 {{#crop}}cover{{/crop}}
                 {{^crop}}contain{{/crop}};
             background-repeat: no-repeat;
-            background-position: {{image_position}};
+            background-position: {{imagePosition}};
 
-            width: {{image_width}};
-            height: {{image_height}};
-            margin: {{image_margin}};
+            width: {{imageWidth}};
+            height: {{imageHeight}};
+            margin: {{imageMargin}};
 
-            filter: {{image_filter}};
+            filter: {{imageFilter}};
         }
 
         @media print {

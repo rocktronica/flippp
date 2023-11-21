@@ -92,22 +92,7 @@ const getHtml = async (
 
   return await renderFile("template.mustache", {
     pages,
-    rows: options.rows,
-    columns: options.columns,
-
-    page_width: options.pageWidth,
-    page_height: options.pageHeight,
-    page_padding: options.pagePadding,
-
-    handle_padding: options.handlePadding,
-
-    image_width: options.imageWidth,
-    image_height: options.imageHeight,
-    image_margin: options.imageMargin,
-    image_position: options.imagePosition,
-
-    crop: options.crop,
-    image_filter: options.imageFilter,
+    ...options,
   });
 };
 
