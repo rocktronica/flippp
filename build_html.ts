@@ -60,6 +60,30 @@ const getPanels = async (
   }));
 };
 
+// deno-lint-ignore no-explicit-any
+const getSettings = (flags: any) => ({
+  title: "output",
+
+  rows: 5,
+  columns: 2,
+
+  pageWidth: "8.5in",
+  pageHeight: "11in",
+  pagePadding: ".5in .75in",
+
+  handlePadding: ".0625in",
+
+  imageWidth: "1.875in",
+  imageHeight: "1.875in",
+  imageMargin: ".0625in",
+  imagePosition: "center center",
+
+  crop: true,
+  imageFilter: "none",
+
+  ...flags,
+});
+
 const getHtml = async (
   directory: string,
   options: {
@@ -99,28 +123,12 @@ const getHtml = async (
 };
 
 const flags = parse(Deno.args);
+const settings = getSettings(flags);
 await Deno.writeTextFile(
   flags.directory + "/index.html",
-  await getHtml(flags.directory, {
-    title: "output",
-
-    rows: 5,
-    columns: 2,
-
-    pageWidth: "8.5in",
-    pageHeight: "11in",
-    pagePadding: ".5in .75in",
-
-    handlePadding: ".0625in",
-
-    imageWidth: "1.875in",
-    imageHeight: "1.875in",
-    imageMargin: ".0625in",
-    imagePosition: "center center",
-
-    crop: true,
-    imageFilter: "none",
-
-    ...flags,
-  }),
+  await getHtml(flags.directory, settings),
+);
+await Deno.writeTextFile(
+  flags.directory + "/settings.json",
+  JSON.stringify(settings, null, 2),
 );
