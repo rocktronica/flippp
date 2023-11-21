@@ -21,6 +21,7 @@ interface HtmlSettings {
   pageWidth: string;
   pageHeight: string;
   pagePadding: string;
+  pageSide: "front" | "back";
 
   handlePadding: string;
 
@@ -44,6 +45,7 @@ const DEFAULT_SETTINGS: HtmlSettings = {
   pageWidth: "8.5in",
   pageHeight: "11in",
   pagePadding: ".5in .75in",
+  pageSide: "front",
 
   handlePadding: ".0625in",
 
@@ -111,6 +113,30 @@ const getPanels = async (
   }));
 };
 
+const getPages = (
+  panels: Panel[],
+  rows: HtmlSettings["rows"],
+  columns: HtmlSettings["columns"],
+  pageSide: HtmlSettings["pageSide"],
+) => {
+  const pages: Page[] = [];
+
+  range(0, getPageCount(panels.length, rows * columns))
+    .forEach(
+      (i: number) => {
+        pages.push({
+          panels: panels.filter((panel: Panel) => panel.page == i),
+        });
+      },
+    );
+
+  if (pageSide == "back") {
+    pages.reverse();
+  }
+
+  return pages;
+};
+
 // deno-lint-ignore no-explicit-any
 const getSettings = (flags: any): HtmlSettings => ({
   ...DEFAULT_SETTINGS,
@@ -121,35 +147,32 @@ const getHtml = async (
   directory: string,
   settings: HtmlSettings,
 ) => {
-  const panels = await getPanels(
-    directory,
-    settings.rows * settings.columns,
-    settings.order,
-  );
-
-  const pages: Page[] = [];
-  range(0, getPageCount(panels.length, settings.rows * settings.columns))
-    .forEach(
-      (i: number) => {
-        pages.push({
-          panels: panels.filter((panel: Panel) => panel.page == i),
-        });
-      },
-    );
-
   return await renderFile("template.mustache", {
-    pages,
+    pages: getPages(
+      await getPanels(
+        directory,
+        settings.rows * settings.columns,
+        settings.order,
+      ),
+      settings.rows,
+      settings.columns,
+      settings.pageSide,
+    ),
+    pageDirection: settings.pageSide == "front" ? "ltr" : "rtl",
     ...settings,
   });
 };
 
-const flags = parse(Deno.args);
-const settings = getSettings(flags);
-await Deno.writeTextFile(
-  flags.directory + "/index.html",
-  await getHtml(flags.directory, settings),
-);
-await Deno.writeTextFile(
-  flags.directory + "/settings.json",
-  JSON.stringify(settings, null, 2),
-);
+(async () => {
+  const flags = parse(Deno.args);
+  const settings = getSettings(flags);
+
+  await Deno.writeTextFile(
+    flags.directory + "/index.html",
+    await getHtml(flags.directory, settings),
+  );
+  await Deno.writeTextFile(
+    flags.directory + "/settings.json",
+    JSON.stringify(settings, null, 2),
+  );
+})();

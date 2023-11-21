@@ -17,6 +17,7 @@ fps="4"
 rows="5"
 columns="2"
 order="panel"
+page_side="front"
 
 # Local variables, set later
 _output_slug=""
@@ -40,6 +41,7 @@ Usage:
 ./make.sh -r <rows>          Panel rows/sheet (Default: ${rows})
 ./make.sh -c <columns>       Panel columns/sheet (Default: ${columns})
 ./make.sh -o <order>         Panel order (Default: ${order})
+./make.sh -s <page_side>     Front or back (Default: ${page_side})
 
 Examples:
 ./make.sh -i path/to/file.mp4 -f 2
@@ -74,7 +76,8 @@ function _build_html() {
         --directory "${_dir}" \
         --rows "${rows}" \
         --columns "${columns}" \
-        --order "${order}"
+        --order "${order}" \
+        --pageSide "${page_side}"
 
     echo "  - Built to ${_dir}/index.html"
 
@@ -143,7 +146,7 @@ function run() {
     wait "${_server_pid}" 2>/dev/null
 }
 
-while getopts "h?i:f:r:c:o:" opt; do
+while getopts "h?i:f:r:c:o:s:" opt; do
     case "$opt" in
         h) _help; exit ;;
         i) input="$OPTARG" ;;
@@ -151,6 +154,7 @@ while getopts "h?i:f:r:c:o:" opt; do
         r) rows="$OPTARG" ;;
         c) columns="$OPTARG" ;;
         o) order="$OPTARG" ;;
+        s) page_side="$OPTARG" ;;
         *) echo; _help; exit ;;
     esac
 done

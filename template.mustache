@@ -31,6 +31,8 @@
             grid-template-columns: repeat({{columns}}, minmax(0, 1fr));
             grid-template-rows: repeat({{rows}}, minmax(0, 1fr));
 
+            direction: {{pageDirection}};
+
             /* For screen display only */
             background: #fff;
             margin: .5in auto;
@@ -45,6 +47,8 @@
             display: flex;
             justify-content: space-between;
             flex-direction: row;
+
+            direction: ltr;
         }
 
         .handle {
