@@ -65,10 +65,17 @@ const getHtml = async (
   options: {
     rows: number;
     columns: number;
+
     pageWidth: string;
     pageHeight: string;
     pagePadding: string;
-    panelPadding: string; // TODO: ditch, allow for custom image content size instead
+
+    handlePadding: string;
+
+    contentWidth: string;
+    contentHeight: string;
+    contentMargin: string;
+
     crop: true;
     imageFilter: string;
   },
@@ -84,14 +91,21 @@ const getHtml = async (
 
   return await renderFile("template.mustache", {
     pages,
-    "rows": options.rows,
-    "columns": options.columns,
-    "page_width": options.pageWidth,
-    "page_height": options.pageHeight,
-    "page_padding": options.pagePadding,
-    "panel_padding": options.panelPadding,
-    "crop": options.crop,
-    "image_filter": options.imageFilter,
+    rows: options.rows,
+    columns: options.columns,
+
+    page_width: options.pageWidth,
+    page_height: options.pageHeight,
+    page_padding: options.pagePadding,
+
+    handle_padding: options.handlePadding,
+
+    content_width: options.contentWidth,
+    content_height: options.contentHeight,
+    content_margin: options.contentMargin,
+
+    crop: options.crop,
+    image_filter: options.imageFilter,
   });
 };
 
@@ -102,10 +116,17 @@ await Deno.writeTextFile(
   await getHtml(flags.directory, {
     rows: 5,
     columns: 2,
+
     pageWidth: "8.5in",
     pageHeight: "11in",
     pagePadding: ".5in .75in",
-    panelPadding: ".0625in",
+
+    handlePadding: ".0625in",
+
+    contentWidth: "1.875in",
+    contentHeight: "1.875in",
+    contentMargin: ".0625in",
+
     crop: true,
     imageFilter: "none",
 

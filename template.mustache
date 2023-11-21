@@ -42,8 +42,6 @@
         }
 
         .panel {
-            padding: {{panel_padding}};
-
             /* For screen display only */
             outline: 1px dashed #ccc;
 
@@ -54,20 +52,20 @@
 
         .handle {
             font-family: monospace;
-
-            width: 1.5in;
-            min-width: 1.5in;
+            padding: {{handle_padding}};
             writing-mode: vertical-lr;
         }
 
         .content {
-            flex: 1;
-
             background-size:
                 {{#crop}}cover{{/crop}}
                 {{^crop}}contain{{/crop}};
             background-repeat: no-repeat;
             background-position: center center; /* TODO: parameterize */
+
+            width: {{content_width}};
+            height: {{content_height}};
+            margin: {{content_margin}};
 
             filter: {{image_filter}};
         }
