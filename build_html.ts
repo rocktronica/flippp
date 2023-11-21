@@ -75,6 +75,7 @@ const getHtml = async (
     imageWidth: string;
     imageHeight: string;
     imageMargin: string;
+    imagePosition: string;
 
     crop: true;
     imageFilter: string;
@@ -103,6 +104,7 @@ const getHtml = async (
     image_width: options.imageWidth,
     image_height: options.imageHeight,
     image_margin: options.imageMargin,
+    image_position: options.imagePosition,
 
     crop: options.crop,
     image_filter: options.imageFilter,
@@ -126,6 +128,7 @@ await Deno.writeTextFile(
     imageWidth: "1.875in",
     imageHeight: "1.875in",
     imageMargin: ".0625in",
+    imagePosition: "center center",
 
     crop: true,
     imageFilter: "none",

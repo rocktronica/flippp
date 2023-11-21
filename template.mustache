@@ -61,7 +61,7 @@
                 {{#crop}}cover{{/crop}}
                 {{^crop}}contain{{/crop}};
             background-repeat: no-repeat;
-            background-position: center center; /* TODO: parameterize */
+            background-position: {{image_position}};
 
             width: {{image_width}};
             height: {{image_height}};
