@@ -72,9 +72,9 @@ const getHtml = async (
 
     handlePadding: string;
 
-    contentWidth: string;
-    contentHeight: string;
-    contentMargin: string;
+    imageWidth: string;
+    imageHeight: string;
+    imageMargin: string;
 
     crop: true;
     imageFilter: string;
@@ -100,9 +100,9 @@ const getHtml = async (
 
     handle_padding: options.handlePadding,
 
-    content_width: options.contentWidth,
-    content_height: options.contentHeight,
-    content_margin: options.contentMargin,
+    image_width: options.imageWidth,
+    image_height: options.imageHeight,
+    image_margin: options.imageMargin,
 
     crop: options.crop,
     image_filter: options.imageFilter,
@@ -123,9 +123,9 @@ await Deno.writeTextFile(
 
     handlePadding: ".0625in",
 
-    contentWidth: "1.875in",
-    contentHeight: "1.875in",
-    contentMargin: ".0625in",
+    imageWidth: "1.875in",
+    imageHeight: "1.875in",
+    imageMargin: ".0625in",
 
     crop: true,
     imageFilter: "none",

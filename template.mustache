@@ -56,16 +56,16 @@
             writing-mode: vertical-lr;
         }
 
-        .content {
+        .image {
             background-size:
                 {{#crop}}cover{{/crop}}
                 {{^crop}}contain{{/crop}};
             background-repeat: no-repeat;
             background-position: center center; /* TODO: parameterize */
 
-            width: {{content_width}};
-            height: {{content_height}};
-            margin: {{content_margin}};
+            width: {{image_width}};
+            height: {{image_height}};
+            margin: {{image_margin}};
 
             filter: {{image_filter}};
         }
@@ -95,7 +95,7 @@
                         <div class="handle">
                             {{filename}} | Page {{page}}
                         </div>
-                        <div class="content" style="background-image:url({{filename}})"></div>
+                        <div class="image" style="background-image:url({{filename}})"></div>
                     {{/filename}}
                 </div>
             {{/panels}}
