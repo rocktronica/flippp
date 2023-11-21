@@ -7,8 +7,7 @@ set -o errexit
 set -o errtrace
 
 # Constants
-# TODO: timestamp of build, not code
-timestamp=$(git log -n1 --date=unix --format="%ad")
+timestamp=$(date +%s)
 commit_hash=$(git log -n1 --format="%h")
 chrome="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 
@@ -17,7 +16,6 @@ chrome="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 fps="4"
 rows="5"
 columns="2"
-print_orientation="portrait"
 
 # Local variables, set later
 _output_slug=""
@@ -40,7 +38,6 @@ Usage:
 ./make.sh -f <fps>           Frames/second (Default: ${fps})
 ./make.sh -r <rows>          Panel rows/sheet (Default: ${rows})
 ./make.sh -c <columns>       Panel columns/sheet (Default: ${columns})
-./make.sh -p <print>         Print orientation (Default: ${print_orientation})
 
 Examples:
 ./make.sh -i path/to/file.mp4 -f 2
@@ -68,8 +65,7 @@ function _build_html() {
         --title "${_output_slug}" \
         --directory "${_dir}" \
         --rows "${rows}" \
-        --columns "${columns}" \
-        --orientation "${print_orientation}"
+        --columns "${columns}"
 
     echo "  - Built to ${_dir}"
 
@@ -138,14 +134,13 @@ function run() {
     wait "${_server_pid}" 2>/dev/null
 }
 
-while getopts "h?i:f:r:c:p:" opt; do
+while getopts "h?i:f:r:c:" opt; do
     case "$opt" in
         h) _help; exit ;;
         i) input="$OPTARG" ;;
         f) fps="$OPTARG" ;;
         r) rows="$OPTARG" ;;
         c) columns="$OPTARG" ;;
-        p) print_orientation="$OPTARG" ;;
         *) echo; _help; exit ;;
     esac
 done
@@ -160,9 +155,7 @@ fi
 # Set local variables after all dependent options have been set
 _basename="$(basename "$input")"
 _output_slug="${_basename%.*}"
-_dir="output/\
-${timestamp}-${commit_hash}/\
-${fps}-${rows}x${columns}-${print_orientation}-${_output_slug}"
+_dir="output/${commit_hash}/${timestamp}-${_output_slug}"
 
 run
 
