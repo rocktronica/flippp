@@ -12,6 +12,48 @@ interface Page {
   panels: Panel[];
 }
 
+interface HtmlSettings {
+  title: string;
+
+  rows: number;
+  columns: number;
+
+  pageWidth: string;
+  pageHeight: string;
+  pagePadding: string;
+
+  handlePadding: string;
+
+  imageWidth: string;
+  imageHeight: string;
+  imageMargin: string;
+  imagePosition: string;
+
+  crop: true;
+  imageFilter: string;
+}
+
+const DEFAULT_SETTINGS: HtmlSettings = {
+  title: "output",
+
+  rows: 5,
+  columns: 2,
+
+  pageWidth: "8.5in",
+  pageHeight: "11in",
+  pagePadding: ".5in .75in",
+
+  handlePadding: ".0625in",
+
+  imageWidth: "1.875in",
+  imageHeight: "1.875in",
+  imageMargin: ".0625in",
+  imagePosition: "center center",
+
+  crop: true,
+  imageFilter: "none",
+};
+
 const getPageCount = (panelCount: number, panelsPerPage: number) =>
   Math.ceil(panelCount / panelsPerPage);
 
@@ -61,64 +103,30 @@ const getPanels = async (
 };
 
 // deno-lint-ignore no-explicit-any
-const getSettings = (flags: any) => ({
-  title: "output",
-
-  rows: 5,
-  columns: 2,
-
-  pageWidth: "8.5in",
-  pageHeight: "11in",
-  pagePadding: ".5in .75in",
-
-  handlePadding: ".0625in",
-
-  imageWidth: "1.875in",
-  imageHeight: "1.875in",
-  imageMargin: ".0625in",
-  imagePosition: "center center",
-
-  crop: true,
-  imageFilter: "none",
-
+const getSettings = (flags: any): HtmlSettings => ({
+  ...DEFAULT_SETTINGS,
   ...flags,
 });
 
 const getHtml = async (
   directory: string,
-  options: {
-    title: string;
-
-    rows: number;
-    columns: number;
-
-    pageWidth: string;
-    pageHeight: string;
-    pagePadding: string;
-
-    handlePadding: string;
-
-    imageWidth: string;
-    imageHeight: string;
-    imageMargin: string;
-    imagePosition: string;
-
-    crop: true;
-    imageFilter: string;
-  },
+  settings: HtmlSettings,
 ) => {
-  const panels = await getPanels(directory, options.rows * options.columns);
+  const panels = await getPanels(directory, settings.rows * settings.columns);
 
   const pages: Page[] = [];
-  range(0, getPageCount(panels.length, options.rows * options.columns)).forEach(
-    (i: number) => {
-      pages.push({ panels: panels.filter((panel: Panel) => panel.page == i) });
-    },
-  );
+  range(0, getPageCount(panels.length, settings.rows * settings.columns))
+    .forEach(
+      (i: number) => {
+        pages.push({
+          panels: panels.filter((panel: Panel) => panel.page == i),
+        });
+      },
+    );
 
   return await renderFile("template.mustache", {
     pages,
-    ...options,
+    ...settings,
   });
 };
 
