@@ -16,6 +16,7 @@ chrome="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 fps="4"
 rows="5"
 columns="2"
+order="panel"
 
 # Local variables, set later
 _output_slug=""
@@ -38,6 +39,7 @@ Usage:
 ./make.sh -f <fps>           Frames/second (Default: ${fps})
 ./make.sh -r <rows>          Panel rows/sheet (Default: ${rows})
 ./make.sh -c <columns>       Panel columns/sheet (Default: ${columns})
+./make.sh -o <order>         Panel order (Default: ${order})
 
 Examples:
 ./make.sh -i path/to/file.mp4 -f 2
@@ -71,7 +73,8 @@ function _build_html() {
         --title "${_output_slug}" \
         --directory "${_dir}" \
         --rows "${rows}" \
-        --columns "${columns}"
+        --columns "${columns}" \
+        --order "${order}"
 
     echo "  - Built to ${_dir}/index.html"
 
@@ -140,13 +143,14 @@ function run() {
     wait "${_server_pid}" 2>/dev/null
 }
 
-while getopts "h?i:f:r:c:" opt; do
+while getopts "h?i:f:r:c:o:" opt; do
     case "$opt" in
         h) _help; exit ;;
         i) input="$OPTARG" ;;
         f) fps="$OPTARG" ;;
         r) rows="$OPTARG" ;;
         c) columns="$OPTARG" ;;
+        o) order="$OPTARG" ;;
         *) echo; _help; exit ;;
     esac
 done

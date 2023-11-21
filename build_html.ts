@@ -31,6 +31,8 @@ interface HtmlSettings {
 
   crop: true;
   imageFilter: string;
+
+  order: "panel" | "alphanumeric";
 }
 
 const DEFAULT_SETTINGS: HtmlSettings = {
@@ -52,6 +54,8 @@ const DEFAULT_SETTINGS: HtmlSettings = {
 
   crop: true,
   imageFilter: "none",
+
+  order: "panel",
 };
 
 const getPageCount = (panelCount: number, panelsPerPage: number) =>
@@ -61,7 +65,7 @@ const getPageIndex = (i: number, panelsPerPage: number) =>
   Math.floor(i / panelsPerPage);
 
 const panelize = (
-  input: string[],
+  input: (string | undefined)[],
   panelsPerPage: number,
 ): (string | undefined)[] => {
   const output: (string | undefined)[] = [];
@@ -83,17 +87,22 @@ const panelize = (
 const getPanels = async (
   directory: string,
   panelsPerPage: number,
+  order: HtmlSettings["order"],
   // TODO: flyleaves
 ): Promise<Panel[]> => {
-  const filenames: string[] = [];
+  let filenames: (string | undefined)[] = [];
   for await (const dirEntry of Deno.readDir(directory)) {
     if (fileExtension(dirEntry.name) == "png") {
       filenames.push(dirEntry.name);
     }
   }
 
-  // TODO: parameterize order
-  return panelize(filenames.sort(), panelsPerPage).map((
+  filenames = filenames.sort();
+  if (order == "panel") {
+    filenames = panelize(filenames, panelsPerPage);
+  }
+
+  return filenames.map((
     filename: string | undefined,
     i: number,
   ) => ({
@@ -112,7 +121,11 @@ const getHtml = async (
   directory: string,
   settings: HtmlSettings,
 ) => {
-  const panels = await getPanels(directory, settings.rows * settings.columns);
+  const panels = await getPanels(
+    directory,
+    settings.rows * settings.columns,
+    settings.order,
+  );
 
   const pages: Page[] = [];
   range(0, getPageCount(panels.length, settings.rows * settings.columns))
