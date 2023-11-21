@@ -44,6 +44,12 @@ Examples:
 "
 }
 
+function _make_folder() {
+    echo "Creating output directory ${_dir}"
+    mkdir -pv "${_dir}" 1> /dev/null
+    echo
+}
+
 function _extract_frames() {
     echo "Extracting frames"
     ffmpeg -i "${input}" \
@@ -67,7 +73,7 @@ function _build_html() {
         --rows "${rows}" \
         --columns "${columns}"
 
-    echo "  - Built to ${_dir}"
+    echo "  - Built to ${_dir}/index.html"
 
     # TODO: fix math, hehe
     _page_count=$(echo "${_frame_count} / (${columns} * ${rows})" | bc)
@@ -115,7 +121,7 @@ function _report() {
 }
 
 function run() {
-    mkdir -pv "${_dir}" 1> /dev/null
+    _make_folder
 
     function finish() {
         # Kill descendent processes
