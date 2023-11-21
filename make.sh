@@ -14,14 +14,13 @@ chrome="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 
 # Option defaults
 # TODO: DRY against built_html.py
-# TODO: directory ID as PDF filename
-output="output.pdf"
 fps="4"
 rows="5"
 columns="2"
 print_orientation="portrait"
 
 # Local variables, set later
+_output_slug=""
 _dir=""
 _server_pid=""
 _frame_count=""
@@ -38,7 +37,6 @@ Usage:
 ./make.sh                    Run!
 ./make.sh -h                 Show this message and quit
 ./make.sh -i <input>         Input file path (Required)
-./make.sh -o <output>        Output PDF file path (Default: ${output})
 ./make.sh -f <fps>           Frames/second (Default: ${fps})
 ./make.sh -r <rows>          Panel rows/sheet (Default: ${rows})
 ./make.sh -c <columns>       Panel columns/sheet (Default: ${columns})
@@ -67,6 +65,7 @@ function _build_html() {
     echo "Building HTML"
 
     deno run --allow-read --allow-write build_html.ts \
+        --title "${_output_slug}" \
         --directory "${_dir}" \
         --rows "${rows}" \
         --columns "${columns}" \
@@ -97,11 +96,11 @@ function _export_pdf() {
     echo "  - \"Printing\" to PDF via Chrome"
     "$chrome" \
         --headless \
-        --print-to-pdf="${_dir}/${output}" \
+        --print-to-pdf="${_dir}/${_output_slug}.pdf" \
         "http://localhost:9002" \
         2> /dev/null
 
-    echo "  - PDF at ${_dir}/${output}"
+    echo "  - PDF at ${_dir}/${_output_slug}.pdf"
 
     echo "  - Stopping PID ${_server_pid}"
     kill "${_server_pid}"
@@ -139,11 +138,10 @@ function run() {
     wait "${_server_pid}" 2>/dev/null
 }
 
-while getopts "h?i:o:f:r:c:p:" opt; do
+while getopts "h?i:f:r:c:p:" opt; do
     case "$opt" in
         h) _help; exit ;;
         i) input="$OPTARG" ;;
-        o) output="$OPTARG" ;;
         f) fps="$OPTARG" ;;
         r) rows="$OPTARG" ;;
         c) columns="$OPTARG" ;;
@@ -159,10 +157,12 @@ if [ -z "$input" ]; then
     exit
 fi
 
-# Set output directory after all dependent options have been set
+# Set local variables after all dependent options have been set
+_basename="$(basename "$input")"
+_output_slug="${_basename%.*}"
 _dir="output/\
 ${timestamp}-${commit_hash}/\
-${fps}-${rows}x${columns}-${print_orientation}-$(basename "$input")"
+${fps}-${rows}x${columns}-${print_orientation}-${_output_slug}"
 
 run
 

@@ -63,6 +63,8 @@ const getPanels = async (
 const getHtml = async (
   directory: string,
   options: {
+    title: string;
+
     rows: number;
     columns: number;
 
@@ -98,9 +100,10 @@ const getHtml = async (
 
 const flags = parse(Deno.args);
 await Deno.writeTextFile(
-  // TODO: parameterize?
   flags.directory + "/index.html",
   await getHtml(flags.directory, {
+    title: "output",
+
     rows: 5,
     columns: 2,
 
