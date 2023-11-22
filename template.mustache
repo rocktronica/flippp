@@ -92,10 +92,10 @@
         <div class="page">
             {{#panels}}
                 <div class="panel">
+                    <div class="handle">
+                        {{id}} {{filename}} pg{{page}}
+                    </div>
                     {{#filename}}
-                        <div class="handle">
-                            {{filename}} | Page {{page}}
-                        </div>
                         <div class="image" style="background-image:url({{filename}})"></div>
                     {{/filename}}
                 </div>

@@ -4,6 +4,7 @@ import { range } from "https://deno.land/x/lodash@4.17.15-es/lodash.js";
 import { renderFile } from "https://deno.land/x/mustache@v0.3.0/mod.ts";
 
 interface Panel {
+  id: number;
   filename: string | undefined;
   page: number;
 }
@@ -34,6 +35,8 @@ interface HtmlSettings {
   imageFilter: string;
 
   order: "panel" | "alphanumeric";
+
+  flyleavesCount: number;
 }
 
 const DEFAULT_SETTINGS: HtmlSettings = {
@@ -58,6 +61,8 @@ const DEFAULT_SETTINGS: HtmlSettings = {
   imageFilter: "none",
 
   order: "panel",
+
+  flyleavesCount: 0,
 };
 
 const getPageCount = (panelCount: number, panelsPerPage: number) =>
@@ -90,7 +95,7 @@ const getPanels = async (
   directory: string,
   panelsPerPage: number,
   order: HtmlSettings["order"],
-  // TODO: flyleaves
+  flyleavesCount: HtmlSettings["flyleavesCount"],
 ): Promise<Panel[]> => {
   let filenames: (string | undefined)[] = [];
   for await (const dirEntry of Deno.readDir(directory)) {
@@ -104,10 +109,15 @@ const getPanels = async (
     filenames = panelize(filenames, panelsPerPage);
   }
 
-  return filenames.map((
+  return [
+    ...Array(flyleavesCount).fill(undefined),
+    ...filenames,
+    ...Array(flyleavesCount).fill(undefined),
+  ].map((
     filename: string | undefined,
     i: number,
   ) => ({
+    id: i,
     filename,
     page: getPageIndex(i, panelsPerPage),
   }));
@@ -153,6 +163,7 @@ const getHtml = async (
         directory,
         settings.rows * settings.columns,
         settings.order,
+        settings.flyleavesCount,
       ),
       settings.rows,
       settings.columns,
