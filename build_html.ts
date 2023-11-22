@@ -50,11 +50,11 @@ const DEFAULT_SETTINGS: HtmlSettings = {
   pagePadding: ".5in .75in",
   pageSide: "front",
 
-  handlePadding: ".0625in",
+  handlePadding: ".125in",
 
-  imageWidth: "1.875in",
+  imageWidth: "2in",
   imageHeight: "1.875in",
-  imageMargin: ".0625in",
+  imageMargin: ".025in",
   imagePosition: "center center",
 
   crop: true,
