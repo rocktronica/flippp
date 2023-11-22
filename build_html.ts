@@ -62,7 +62,7 @@ const DEFAULT_SETTINGS: HtmlSettings = {
 
   order: "panel",
 
-  flyleavesCount: 0,
+  flyleavesCount: 2,
 };
 
 const getPageCount = (panelCount: number, panelsPerPage: number) =>
@@ -106,15 +106,18 @@ const getPanels = async (
 
   // NOTE: this assumes numbers are zero-padded!
   filenames = filenames.sort();
+
+  filenames = [
+    ...Array(flyleavesCount).fill("blank.png"),
+    ...filenames,
+    ...Array(flyleavesCount).fill("blank.png"),
+  ];
+
   if (order == "panel") {
     filenames = panelize(filenames, panelsPerPage);
   }
 
-  return [
-    ...Array(flyleavesCount).fill(undefined),
-    ...filenames,
-    ...Array(flyleavesCount).fill(undefined),
-  ].map((
+  return filenames.map((
     filename: string | undefined,
     i: number,
   ) => ({
