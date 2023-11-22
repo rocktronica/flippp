@@ -54,7 +54,8 @@
         .handle {
             font-family: monospace;
             padding: {{handlePadding}};
-            writing-mode: vertical-lr;
+            font-size: 10px;
+            line-height: 2;
         }
 
         .image {
@@ -93,7 +94,9 @@
             {{#panels}}
                 <div class="panel">
                     <div class="handle">
-                        {{id}} {{filename}} pg{{page}}
+                        {{filename}}{{^filename}}BLANK{{/filename}}<br />
+                        P {{page}}<br />
+                        # {{id}}
                     </div>
                     {{#filename}}
                         <div class="image" style="background-image:url({{filename}})"></div>

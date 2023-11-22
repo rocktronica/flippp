@@ -104,6 +104,7 @@ const getPanels = async (
     }
   }
 
+  // NOTE: this assumes numbers are zero-padded!
   filenames = filenames.sort();
   if (order == "panel") {
     filenames = panelize(filenames, panelsPerPage);
