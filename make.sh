@@ -23,8 +23,8 @@ page_side="front"
 _output_slug=""
 _dir=""
 _server_pid=""
-_frame_count=""
-_page_count=""
+_frame_count="0"
+_page_count="0"
 
 function _help() {
     echo "\
