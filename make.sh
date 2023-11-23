@@ -18,7 +18,7 @@ dir=""
 fps="4"
 rows="5"
 columns="2"
-order="panel"
+order="alphanumeric"
 page_side="front"
 
 # Local variables, set later

@@ -34,7 +34,7 @@ interface HtmlSettings {
   crop: true;
   imageFilter: string;
 
-  order: "panel" | "alphanumeric";
+  order: "alphanumeric" | "panel";
 
   flyleavesCount: number;
 }
@@ -60,7 +60,7 @@ const DEFAULT_SETTINGS: HtmlSettings = {
   crop: true,
   imageFilter: "none",
 
-  order: "panel",
+  order: "alphanumeric",
 
   flyleavesCount: 2,
 };
