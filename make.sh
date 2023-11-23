@@ -13,6 +13,8 @@ chrome="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 
 # Option defaults
 # TODO: DRY against built_html.py
+input=""
+dir=""
 fps="4"
 rows="5"
 columns="2"
@@ -21,7 +23,6 @@ page_side="front"
 
 # Local variables, set later
 _output_slug=""
-_dir=""
 _server_pid=""
 _frame_count="0"
 _page_count="0"
@@ -37,6 +38,7 @@ Usage:
 ./make.sh                    Run!
 ./make.sh -h                 Show this message and quit
 ./make.sh -i <input>         Input file path (Required)
+./make.sh -d <directory>     Output directory
 ./make.sh -f <fps>           Frames/second (Default: ${fps})
 ./make.sh -r <rows>          Panel rows/sheet (Default: ${rows})
 ./make.sh -c <columns>       Panel columns/sheet (Default: ${columns})
@@ -49,8 +51,8 @@ Examples:
 }
 
 function _make_folder() {
-    echo "Creating output directory ${_dir}"
-    mkdir -pv "${_dir}" 1> /dev/null
+    echo "Creating output directory ${dir}"
+    mkdir -pv "${dir}" 1> /dev/null
     echo
 }
 
@@ -59,9 +61,9 @@ function _extract_frames() {
     ffmpeg -i "${input}" \
         -vf fps="${fps}" \
         -hide_banner -loglevel error \
-        "${_dir}/%04d.png"
+        "${dir}/%04d.png"
 
-    _frame_count=$(find "${_dir}"/*.png | wc -l | xargs)
+    _frame_count=$(find "${dir}"/*.png | wc -l | xargs)
 
     echo "  - ${_frame_count} frames extracted"
 
@@ -73,13 +75,13 @@ function _build_html() {
 
     deno run --allow-read --allow-write build_html.ts \
         --title "${_output_slug}" \
-        --directory "${_dir}" \
+        --directory "${dir}" \
         --rows "${rows}" \
         --columns "${columns}" \
         --order "${order}" \
         --pageSide "${page_side}"
 
-    echo "  - Built to ${_dir}/index.html"
+    echo "  - Built to ${dir}/index.html"
 
     # TODO: fix math, hehe
     _page_count=$(echo "${_frame_count} / (${columns} * ${rows})" | bc)
@@ -92,7 +94,7 @@ function _export_pdf() {
     echo "Export PDF"
 
     echo "  - Starting server"
-    pushd "${_dir}" &> /dev/null
+    pushd "${dir}" &> /dev/null
     python3 -m http.server 9002 &> /dev/null &
     _server_pid=$!
     popd &> /dev/null
@@ -104,11 +106,11 @@ function _export_pdf() {
     echo "  - \"Printing\" to PDF via Chrome"
     "$chrome" \
         --headless \
-        --print-to-pdf="${_dir}/${_output_slug}.pdf" \
+        --print-to-pdf="${dir}/${_output_slug}.pdf" \
         "http://localhost:9002" \
         2> /dev/null
 
-    echo "  - PDF at ${_dir}/${_output_slug}.pdf"
+    echo "  - PDF at ${dir}/${_output_slug}.pdf"
 
     echo "  - Stopping PID ${_server_pid}"
     kill "${_server_pid}"
@@ -123,7 +125,7 @@ function _report() {
 
     echo "Done!"
     echo "  - Finished in $runtime seconds"
-    echo "  - ${input} -> ${_dir}/"
+    echo "  - ${input} -> ${dir}/"
 }
 
 function run() {
@@ -146,10 +148,11 @@ function run() {
     wait "${_server_pid}" 2>/dev/null
 }
 
-while getopts "h?i:f:r:c:o:s:" opt; do
+while getopts "h?i:d:f:r:c:o:s:" opt; do
     case "$opt" in
         h) _help; exit ;;
         i) input="$OPTARG" ;;
+        d) dir="$OPTARG" ;;
         f) fps="$OPTARG" ;;
         r) rows="$OPTARG" ;;
         c) columns="$OPTARG" ;;
@@ -169,7 +172,9 @@ fi
 # Set local variables after all dependent options have been set
 _basename="$(basename "$input")"
 _output_slug="${_basename%.*}"
-_dir="output/${commit_hash}/${timestamp}-${_output_slug}"
+if [ -z "$dir" ]; then
+    dir="output/${commit_hash}/${timestamp}-${_output_slug}"
+fi
 
 run
 
