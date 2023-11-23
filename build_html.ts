@@ -54,7 +54,7 @@ const DEFAULT_SETTINGS: HtmlSettings = {
 
   imageWidth: "2in",
   imageHeight: "1.875in",
-  imageMargin: ".025in",
+  imageMargin: ".0625in",
   imagePosition: "center center",
 
   crop: true,
