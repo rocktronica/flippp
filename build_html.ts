@@ -1,5 +1,4 @@
 import { fileExtension } from "https://deno.land/x/file_extension@v2.1.0/mod.ts";
-import { parse } from "https://deno.land/std@0.202.0/flags/mod.ts";
 import { range } from "https://deno.land/x/lodash@4.17.15-es/lodash.js";
 import { renderFile } from "https://deno.land/x/mustache@v0.3.0/mod.ts";
 
@@ -13,7 +12,7 @@ interface Page {
   panels: Panel[];
 }
 
-interface HtmlSettings {
+export interface HtmlSettings {
   title: string;
 
   rows: number;
@@ -37,7 +36,7 @@ interface HtmlSettings {
   flyleavesCount: number;
 }
 
-const DEFAULT_SETTINGS: HtmlSettings = {
+export const DEFAULT_HTML_SETTINGS: HtmlSettings = {
   title: "output",
 
   rows: 5,
@@ -123,12 +122,12 @@ const getPages = (
 };
 
 // deno-lint-ignore no-explicit-any
-const getSettings = (flags: any): HtmlSettings => ({
-  ...DEFAULT_SETTINGS,
+export const getSettings = (flags: any): HtmlSettings => ({
+  ...DEFAULT_HTML_SETTINGS,
   ...flags,
 });
 
-const getHtml = async (
+export const getHtml = async (
   directory: string,
   settings: HtmlSettings,
 ) => {
@@ -147,17 +146,3 @@ const getHtml = async (
     ...settings,
   });
 };
-
-(async () => {
-  const flags = parse(Deno.args);
-  const settings = getSettings(flags);
-
-  await Deno.writeTextFile(
-    flags.directory + "/index.html",
-    await getHtml(flags.directory, settings),
-  );
-  await Deno.writeTextFile(
-    flags.directory + "/settings.json",
-    JSON.stringify(settings, null, 2),
-  );
-})();
