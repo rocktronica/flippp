@@ -34,8 +34,6 @@ interface HtmlSettings {
   crop: true;
   imageFilter: string;
 
-  order: "alphanumeric" | "panel";
-
   flyleavesCount: number;
 }
 
@@ -60,8 +58,6 @@ const DEFAULT_SETTINGS: HtmlSettings = {
   crop: true,
   imageFilter: "none",
 
-  order: "alphanumeric",
-
   flyleavesCount: 2,
 };
 
@@ -71,30 +67,9 @@ const getPageCount = (panelCount: number, panelsPerPage: number) =>
 const getPageIndex = (i: number, panelsPerPage: number) =>
   Math.floor(i / panelsPerPage);
 
-const panelize = (
-  input: (string | undefined)[],
-  panelsPerPage: number,
-): (string | undefined)[] => {
-  const output: (string | undefined)[] = [];
-  const pageCount = getPageCount(input.length, panelsPerPage);
-
-  range(0, pageCount * panelsPerPage).forEach((i: number) => {
-    const pageIndex = getPageIndex(i, panelsPerPage);
-    const panelIndex = i % panelsPerPage;
-    const inputIndex = panelIndex * pageCount + pageIndex;
-
-    output.push(
-      inputIndex <= input.length ? input[inputIndex] : undefined,
-    );
-  });
-
-  return output;
-};
-
 const getPanels = async (
   directory: string,
   panelsPerPage: number,
-  order: HtmlSettings["order"],
   flyleavesCount: HtmlSettings["flyleavesCount"],
 ): Promise<Panel[]> => {
   let filenames: (string | undefined)[] = [];
@@ -112,10 +87,6 @@ const getPanels = async (
     ...filenames,
     ...Array(flyleavesCount).fill("blank.png"),
   ];
-
-  if (order == "panel") {
-    filenames = panelize(filenames, panelsPerPage);
-  }
 
   return filenames.map((
     filename: string | undefined,
@@ -166,7 +137,6 @@ const getHtml = async (
       await getPanels(
         directory,
         settings.rows * settings.columns,
-        settings.order,
         settings.flyleavesCount,
       ),
       settings.rows,

@@ -18,7 +18,6 @@ dir=""
 fps="4"
 rows="5"
 columns="2"
-order="alphanumeric"
 page_side="front"
 
 # Local variables, set later
@@ -42,7 +41,6 @@ Usage:
 ./make.sh -f <fps>           Frames/second (Default: ${fps})
 ./make.sh -r <rows>          Panel rows/sheet (Default: ${rows})
 ./make.sh -c <columns>       Panel columns/sheet (Default: ${columns})
-./make.sh -o <order>         Panel order (Default: ${order})
 ./make.sh -s <page_side>     Front or back (Default: ${page_side})
 
 Examples:
@@ -78,7 +76,6 @@ function _build_html() {
         --directory "${dir}" \
         --rows "${rows}" \
         --columns "${columns}" \
-        --order "${order}" \
         --pageSide "${page_side}"
 
     echo "  - Built to ${dir}/index.html"
@@ -156,7 +153,6 @@ while getopts "h?i:d:f:r:c:o:s:" opt; do
         f) fps="$OPTARG" ;;
         r) rows="$OPTARG" ;;
         c) columns="$OPTARG" ;;
-        o) order="$OPTARG" ;;
         s) page_side="$OPTARG" ;;
         *) echo; _help; exit ;;
     esac
