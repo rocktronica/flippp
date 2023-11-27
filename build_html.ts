@@ -83,9 +83,9 @@ const getPanels = async (
   filenames = filenames.sort();
 
   filenames = [
-    ...Array(flyleavesCount).fill("blank.png"),
+    ...Array(flyleavesCount).fill(undefined),
     ...filenames,
-    ...Array(flyleavesCount).fill("blank.png"),
+    ...Array(flyleavesCount).fill(undefined),
   ];
 
   return filenames.map((
