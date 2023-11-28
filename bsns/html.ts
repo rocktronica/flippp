@@ -13,8 +13,6 @@ interface Page {
 }
 
 export interface HtmlSettings {
-  title: string;
-
   rows: number;
   columns: number;
 
@@ -98,10 +96,12 @@ const getPages = (
 };
 
 export const getHtml = async (
+  title: string,
   directory: string,
   settings: HtmlSettings,
 ) => {
   return await renderFile("./bsns/template.mustache", {
+    title,
     pages: getPages(
       await getPanels(
         directory,

@@ -17,15 +17,20 @@ const runGet = async (
     .trim();
 
 const getDir = async (outputSlug: string): Promise<string> => {
-  // TODO: ditch when "stable"
-  const commitHash = await runGet("git", ["log", "-n1", "--format=%h"]);
   const timestamp = await runGet("date", ["+%s"]);
-
-  return `output/${commitHash}/${timestamp}-${outputSlug}`;
+  return `output/${timestamp}-${outputSlug}`;
 };
 
+const getOutputSlug = async (input: string): Promise<string> => {
+  const basename = await runGet("basename", [input]);
+  return basename.slice(0, basename.lastIndexOf("."));
+};
+
+const getOutputPdfPath = (dir: string, outputSlug: string) =>
+  `${dir}/${outputSlug}.pdf`;
+
 const makeFolder = async (dir: string) => {
-  console.log(`Creating output directory ${dir}`);
+  console.log(`Creating output directory ${dir}/`);
   await run("mkdir", ["-pv", dir]);
   console.log();
 };
@@ -44,11 +49,12 @@ const extractFrames = async (input: string, fps: number, dir: string) => {
     `${dir}/%04d.png`,
   ]);
 
-  // TODO: report count
-  console.log("  - Frames extracted");
+  const count = (await runGet("ls", [dir])).split(/\r?\n|\r|\n/g).length;
+  console.log(`  - ${count} frames extracted from ${input} to ${dir}`);
   console.log();
 };
 
+// TODO: save all flags, not just HtmlSettings
 const saveSettings = async (dir: string, settings: HtmlSettings) => {
   console.log("Saving settings JSON");
 
@@ -62,12 +68,12 @@ const saveSettings = async (dir: string, settings: HtmlSettings) => {
 
 const exportPdf = async (
   dir: string,
+  path: string,
   outputSlug: string,
   settings: HtmlSettings,
   port = 8080,
 ) => {
-  const path = `${dir}/${outputSlug}.pdf`;
-  const html: BodyInit = await getHtml(dir, settings);
+  const html: BodyInit = await getHtml(outputSlug, dir, settings);
 
   console.log("Export PDF");
 
@@ -116,21 +122,30 @@ const exportPdf = async (
   console.log();
 };
 
-const report = (runtimeInMilliseconds: number, input: string, dir: string) => {
+const report = (
+  runtimeInMilliseconds: number,
+  input: string,
+  outputPdfPath: string,
+) => {
   console.log("Done!");
   console.log(`  - Finished in ${runtimeInMilliseconds / 1000} seconds`);
-  console.log(`  - ${input} -> ${dir}/`);
+  console.log(`  - ${input} -> ${outputPdfPath}`);
 };
 
 await new Command()
   .name("./make.sh")
   .description("Make flipbook from video")
-  .option("-i --input <input:string>", "Input movie path", { required: true })
-  .option("--title <title:string>", "PDF title", { default: "output" })
+  .option("-i --input <input:string>", "Input movie file path", {
+    required: true,
+  })
+  .option("--fps <fps:number>", "Frames Per Second", { default: 4 })
+  .option("--dir <dir:string>", "Output directory path")
+  .group("Layout options")
   .option("--rows <rows:number>", "Panel rows per page", { default: 5 })
   .option("--columns <columns:number>", "Panel columns per page", {
     default: 2,
   })
+  .group("Page options")
   .option("--pageWidth <pageWidth:string>", "Page width", { default: "8.5in" })
   .option("--pageHeight <pageHeight:string>", "Page height", {
     default: "11in",
@@ -138,7 +153,9 @@ await new Command()
   .option("--pagePadding <pagePadding:string>", "Page padding", {
     default: ".5in .75in",
   })
-  .option("--pageSide <pageSide:string>", "Front or back", { default: "front" }) // "front" | "back"
+  .option("--pageSide <pageSide:string>", 'Page side: "front" or "back"', {
+    default: "front",
+  })
   .option(
     "--handlePadding <handlePadding:string>",
     "Padding on handle, under binding",
@@ -146,6 +163,12 @@ await new Command()
       default: ".125in",
     },
   )
+  .option(
+    "--flyleavesCount <flyleavesCount:number>",
+    "Blank panels at front/back",
+    { default: 0 },
+  )
+  .group("Image options")
   .option("--imageWidth <imageWidth:string>", "Image width", { default: "2in" })
   .option("--imageHeight <imageHeight:string>", "Image height", {
     default: "1.875in",
@@ -168,25 +191,20 @@ await new Command()
   .option("--imageFilter <imageFilter:string>", "Optional CSS filter", {
     default: "none",
   })
-  .option(
-    "--flyleavesCount <flyleavesCount:number>",
-    "Blank panels at front/back",
-    { default: 2 },
-  )
   .help({ colors: false })
   .action(
-    async ({ input, ...settings }) => {
+    async ({ input, fps, dir, ...settings }) => {
       const startTime = Date.now();
-
-      const outputSlug = await runGet("basename", [input]);
-      const dir = await getDir(outputSlug); // TODO: parameterize
+      const outputSlug = await getOutputSlug(input);
+      dir = dir || await getDir(outputSlug);
+      const outputPdfPath = getOutputPdfPath(dir, outputSlug);
 
       await makeFolder(dir);
-      await extractFrames(input, 4, dir); // TODO: whoops
+      await extractFrames(input, fps, dir);
       await saveSettings(dir, settings);
-      await exportPdf(dir, outputSlug, settings);
+      await exportPdf(dir, outputPdfPath, outputSlug, settings);
 
-      report(Date.now() - startTime, input, dir);
+      report(Date.now() - startTime, input, outputPdfPath);
     },
   )
   .parse();

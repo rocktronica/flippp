@@ -6,7 +6,7 @@ Print it out, cut it up, staple, and flip!
 
 ## Usage
 
-First, install [Deno](https://deno.com/). Then,
+First, install [Deno](https://deno.com/) and ffmpeg. Then,
 
 ``` bash
 # View help to see full flag list
@@ -16,9 +16,9 @@ First, install [Deno](https://deno.com/). Then,
 ./flippp.sh -i <input>
 ```
 
-* Print output PDF at 100% scale on cardstock
-* Cut marks are on-screen only and don't print
-* Bind with a heavy-duty stapler
+1. Print output PDF at 100% scale on cardstock
+1. Cut with a guillotine trimmer; note that lines are on-screen only and don't print
+1. Bind with a heavy-duty stapler
 
 ## License
 
