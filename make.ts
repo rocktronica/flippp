@@ -1,6 +1,6 @@
-// TODO: organize, help()
+// TODO: organize
 
-import { parse } from "https://deno.land/std@0.202.0/flags/mod.ts";
+import { Command } from "https://deno.land/x/cliffy@v1.0.0-rc.3/command/mod.ts";
 import puppeteer from "https://deno.land/x/puppeteer@16.2.0/mod.ts";
 import { printf } from "https://deno.land/std@0.208.0/fmt/printf.ts";
 import { fileExtension } from "https://deno.land/x/file_extension@v2.1.0/mod.ts";
@@ -26,7 +26,7 @@ export interface HtmlSettings {
   pageWidth: string;
   pageHeight: string;
   pagePadding: string;
-  pageSide: "front" | "back";
+  pageSide: string;
 
   handlePadding: string;
 
@@ -35,35 +35,11 @@ export interface HtmlSettings {
   imageMargin: string;
   imagePosition: string;
 
-  crop: true;
+  crop: boolean;
   imageFilter: string;
 
   flyleavesCount: number;
 }
-
-export const DEFAULT_HTML_SETTINGS: HtmlSettings = {
-  title: "output",
-
-  rows: 5,
-  columns: 2,
-
-  pageWidth: "8.5in",
-  pageHeight: "11in",
-  pagePadding: ".5in .75in",
-  pageSide: "front",
-
-  handlePadding: ".125in",
-
-  imageWidth: "2in",
-  imageHeight: "1.875in",
-  imageMargin: ".0625in",
-  imagePosition: "center center",
-
-  crop: true,
-  imageFilter: "none",
-
-  flyleavesCount: 2,
-};
 
 const getPageCount = (panelCount: number, panelsPerPage: number) =>
   Math.ceil(panelCount / panelsPerPage);
@@ -125,12 +101,6 @@ const getPages = (
 
   return pages;
 };
-
-// deno-lint-ignore no-explicit-any
-export const getSettings = (flags: any): HtmlSettings => ({
-  ...DEFAULT_HTML_SETTINGS,
-  ...flags,
-});
 
 export const getHtml = async (
   directory: string,
@@ -270,30 +240,71 @@ const report = (runtimeInMilliseconds: number, input: string, dir: string) => {
   console.log(`  - ${input} -> ${dir}/`);
 };
 
-(async () => {
-  const startTime = Date.now();
+await new Command()
+  .name("flippp")
+  .description("Make flipbook from video")
+  .option("-i --input <input:string>", "Input movie path", { required: true })
+  .option("--title <title:string>", "PDF title", { default: "output" })
+  .option("--rows <rows:number>", "Panel rows per page", { default: 5 })
+  .option("--columns <columns:number>", "Panel columns per page", {
+    default: 2,
+  })
+  .option("--pageWidth <pageWidth:string>", "Page width", { default: "8.5in" })
+  .option("--pageHeight <pageHeight:string>", "Page height", {
+    default: "11in",
+  })
+  .option("--pagePadding <pagePadding:string>", "Page padding", {
+    default: ".5in .75in",
+  })
+  .option("--pageSide <pageSide:string>", "Front or back", { default: "front" }) // "front" | "back"
+  .option(
+    "--handlePadding <handlePadding:string>",
+    "Padding on handle, under binding",
+    {
+      default: ".125in",
+    },
+  )
+  .option("--imageWidth <imageWidth:string>", "Image width", { default: "2in" })
+  .option("--imageHeight <imageHeight:string>", "Image height", {
+    default: "1.875in",
+  })
+  .option(
+    "--imageMargin <imageMargin:string>",
+    "Margin between image and panel",
+    { default: ".0625in" },
+  )
+  .option(
+    "--imagePosition <imagePosition:string>",
+    "CSS background-position for image",
+    {
+      default: "center center",
+    },
+  )
+  .option("--crop <crop:boolean>", "Crop image or show all of it", {
+    default: true,
+  })
+  .option("--imageFilter <imageFilter:string>", "Optional CSS filter", {
+    default: "none",
+  })
+  .option(
+    "--flyleavesCount <flyleavesCount:number>",
+    "Blank panels at front/back",
+    { default: 2 },
+  )
+  .help({ colors: false })
+  .action(
+    async ({ input, ...settings }) => {
+      const startTime = Date.now();
 
-  const flags = parse(Deno.args, {
-    default: { input: "", ...DEFAULT_HTML_SETTINGS },
-  });
+      const outputSlug = await runGet("basename", [input]);
+      const dir = await getDir(outputSlug);
 
-  try {
-    await Deno.open(flags.input);
-  } catch (error) {
-    if (error instanceof Deno.errors.NotFound) {
-      console.error(`Input file ${flags.input} not found`);
-      Deno.exit();
-    }
-  }
+      await makeFolder(dir);
+      await extractFrames(input, 4, dir);
+      await saveSettings(dir, settings);
+      await exportPdf(dir, outputSlug, settings);
 
-  const outputSlug = await runGet("basename", [flags.input]);
-  const dir = await getDir(outputSlug);
-  const settings = getSettings(flags);
-
-  await makeFolder(dir);
-  await extractFrames(flags.input, 4, dir);
-  await saveSettings(dir, settings);
-  await exportPdf(dir, outputSlug, settings);
-
-  report(Date.now() - startTime, flags.input, dir);
-})();
+      report(Date.now() - startTime, input, dir);
+    },
+  )
+  .parse();
