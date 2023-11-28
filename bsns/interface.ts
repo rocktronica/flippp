@@ -122,7 +122,7 @@ const report = (runtimeInMilliseconds: number, input: string, dir: string) => {
 };
 
 await new Command()
-  .name("flippp")
+  .name("./make.sh")
   .description("Make flipbook from video")
   .option("-i --input <input:string>", "Input movie path", { required: true })
   .option("--title <title:string>", "PDF title", { default: "output" })
@@ -181,7 +181,7 @@ await new Command()
       const dir = await getDir(outputSlug);
 
       await makeFolder(dir);
-      await extractFrames(input, 4, dir);
+      await extractFrames(input, 4, dir); // TODO: whoops
       await saveSettings(dir, settings);
       await exportPdf(dir, outputSlug, settings);
 
