@@ -15,6 +15,6 @@ PUPPETEER_PRODUCT=chrome \
 # Run, passing all arguments
 deno run \
     --allow-run --allow-read --allow-write --allow-env --allow-net --unstable \
-    make.ts ${@}
+    bsns/interface.ts ${@}
 
 }
