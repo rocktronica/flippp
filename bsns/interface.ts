@@ -17,6 +17,7 @@ const runGet = async (
     .trim();
 
 const getDir = async (outputSlug: string): Promise<string> => {
+  // TODO: ditch when "stable"
   const commitHash = await runGet("git", ["log", "-n1", "--format=%h"]);
   const timestamp = await runGet("date", ["+%s"]);
 
@@ -178,7 +179,7 @@ await new Command()
       const startTime = Date.now();
 
       const outputSlug = await runGet("basename", [input]);
-      const dir = await getDir(outputSlug);
+      const dir = await getDir(outputSlug); // TODO: parameterize
 
       await makeFolder(dir);
       await extractFrames(input, 4, dir); // TODO: whoops

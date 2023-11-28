@@ -6,11 +6,19 @@ Print it out, cut it up, staple, and flip!
 
 ## Usage
 
-```
-./make.sh -i <input>
+First, install [Deno](https://deno.com/). Then,
 
-./make.sh -h
+``` bash
+# View help to see full flag list
+./flippp.sh -h
+
+# Flipbook with default flags
+./flippp.sh -i <input>
 ```
+
+* Print output PDF at 100% scale on cardstock
+* Cut marks are on-screen only and don't print
+* Bind with a heavy-duty stapler
 
 ## License
 
