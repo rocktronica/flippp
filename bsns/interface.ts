@@ -1,5 +1,4 @@
 import { getHtml, HtmlSettings } from "./html.ts";
-import { Command } from "https://deno.land/x/cliffy@v1.0.0-rc.3/command/mod.ts";
 import puppeteer from "https://deno.land/x/puppeteer@16.2.0/mod.ts";
 import { printf } from "https://deno.land/std@0.208.0/fmt/printf.ts";
 
@@ -16,26 +15,30 @@ const runGet = async (
     .decode((await run(command, args)).stdout)
     .trim();
 
-const getDir = async (outputSlug: string): Promise<string> => {
+export const getDir = async (outputSlug: string): Promise<string> => {
   const timestamp = await runGet("date", ["+%s"]);
   return `output/${timestamp}-${outputSlug}`;
 };
 
-const getOutputSlug = async (input: string): Promise<string> => {
+export const getOutputSlug = async (input: string): Promise<string> => {
   const basename = await runGet("basename", [input]);
   return basename.slice(0, basename.lastIndexOf("."));
 };
 
-const getOutputPdfPath = (dir: string, outputSlug: string) =>
+export const getOutputPdfPath = (dir: string, outputSlug: string) =>
   `${dir}/${outputSlug}.pdf`;
 
-const makeFolder = async (dir: string) => {
+export const makeFolder = async (dir: string) => {
   console.log(`Creating output directory ${dir}/`);
   await run("mkdir", ["-pv", dir]);
   console.log();
 };
 
-const extractFrames = async (input: string, fps: number, dir: string) => {
+export const extractFrames = async (
+  input: string,
+  fps: number,
+  dir: string,
+) => {
   console.log("Extracting frames");
 
   await run("ffmpeg", [
@@ -55,7 +58,7 @@ const extractFrames = async (input: string, fps: number, dir: string) => {
 };
 
 // deno-lint-ignore no-explicit-any
-const saveOptions = async (dir: string, options: any) => {
+export const saveOptions = async (dir: string, options: any) => {
   console.log("Saving options JSON");
 
   const path = `${dir}/options.json`;
@@ -66,7 +69,7 @@ const saveOptions = async (dir: string, options: any) => {
   console.log();
 };
 
-const exportPdf = async (
+export const exportPdf = async (
   dir: string,
   path: string,
   outputSlug: string,
@@ -122,7 +125,7 @@ const exportPdf = async (
   console.log();
 };
 
-const report = (
+export const report = (
   runtimeInMilliseconds: number,
   input: string,
   outputPdfPath: string,
@@ -131,82 +134,3 @@ const report = (
   console.log(`  - Finished in ${runtimeInMilliseconds / 1000} seconds`);
   console.log(`  - ${input} -> ${outputPdfPath}`);
 };
-
-await new Command()
-  .name("./make.sh")
-  .description("Make flipbook from video")
-  .option("-i --input <input:string>", "Input movie file path", {
-    required: true,
-  })
-  .option("--fps <fps:number>", "Frames Per Second", { default: 4 })
-  .option("--dir <dir:string>", "Output directory path")
-  .group("Layout options")
-  .option("--rows <rows:number>", "Panel rows per page", { default: 5 })
-  .option("--columns <columns:number>", "Panel columns per page", {
-    default: 2,
-  })
-  .group("Page options")
-  .option("--pageWidth <pageWidth:string>", "Page width", { default: "8.5in" })
-  .option("--pageHeight <pageHeight:string>", "Page height", {
-    default: "11in",
-  })
-  .option("--pagePadding <pagePadding:string>", "Page padding", {
-    default: ".5in .75in",
-  })
-  .option("--pageSide <pageSide:string>", 'Page side: "front" or "back"', {
-    default: "front",
-  })
-  .option(
-    "--handlePadding <handlePadding:string>",
-    "Padding on handle, under binding",
-    {
-      default: ".125in",
-    },
-  )
-  .option(
-    "--flyleavesCount <flyleavesCount:number>",
-    "Blank panels at front/back",
-    { default: 0 },
-  )
-  .group("Image options")
-  .option("--imageWidth <imageWidth:string>", "Image width", { default: "2in" })
-  .option("--imageHeight <imageHeight:string>", "Image height", {
-    default: "1.875in",
-  })
-  .option(
-    "--imageMargin <imageMargin:string>",
-    "Margin between image and panel",
-    { default: ".0625in" },
-  )
-  .option(
-    "--imagePosition <imagePosition:string>",
-    "CSS background-position for image",
-    {
-      default: "center center",
-    },
-  )
-  .option("--crop <crop:boolean>", "Crop image or show all of it", {
-    default: true,
-  })
-  .option("--imageFilter <imageFilter:string>", "Optional CSS filter", {
-    default: "none",
-  })
-  .help({ colors: false })
-  .action(
-    async (options) => {
-      const startTime = Date.now();
-
-      let { input, fps, dir, ...settings } = options;
-      const outputSlug = await getOutputSlug(input);
-      dir = dir || await getDir(outputSlug);
-      const outputPdfPath = getOutputPdfPath(dir, outputSlug);
-
-      await makeFolder(dir);
-      await extractFrames(input, fps, dir);
-      await saveOptions(dir, options);
-      await exportPdf(dir, outputPdfPath, outputSlug, settings);
-
-      report(Date.now() - startTime, input, outputPdfPath);
-    },
-  )
-  .parse();
