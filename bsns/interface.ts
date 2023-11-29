@@ -54,13 +54,13 @@ const extractFrames = async (input: string, fps: number, dir: string) => {
   console.log();
 };
 
-// TODO: save all flags, not just HtmlSettings
-const saveSettings = async (dir: string, settings: HtmlSettings) => {
-  console.log("Saving settings JSON");
+// deno-lint-ignore no-explicit-any
+const saveOptions = async (dir: string, options: any) => {
+  console.log("Saving options JSON");
 
-  const path = `${dir}/settings.json`;
+  const path = `${dir}/options.json`;
 
-  await Deno.writeTextFile(path, JSON.stringify(settings, null, 2));
+  await Deno.writeTextFile(path, JSON.stringify(options, null, 2));
 
   console.log(`  - Saved to ${path}`);
   console.log();
@@ -193,15 +193,17 @@ await new Command()
   })
   .help({ colors: false })
   .action(
-    async ({ input, fps, dir, ...settings }) => {
+    async (options) => {
       const startTime = Date.now();
+
+      let { input, fps, dir, ...settings } = options;
       const outputSlug = await getOutputSlug(input);
       dir = dir || await getDir(outputSlug);
       const outputPdfPath = getOutputPdfPath(dir, outputSlug);
 
       await makeFolder(dir);
       await extractFrames(input, fps, dir);
-      await saveSettings(dir, settings);
+      await saveOptions(dir, options);
       await exportPdf(dir, outputPdfPath, outputSlug, settings);
 
       report(Date.now() - startTime, input, outputPdfPath);
