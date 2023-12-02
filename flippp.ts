@@ -38,7 +38,7 @@ await new Command()
     "--handlePadding <handlePadding:string>",
     "Padding on handle, under binding",
     {
-      default: ".125in",
+      default: ".0625in",
     },
   )
   .option(

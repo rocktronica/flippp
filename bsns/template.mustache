@@ -52,10 +52,13 @@
         }
 
         .handle {
+            flex: 1;
             font-family: monospace;
             padding: {{handlePadding}};
             font-size: 10px;
-            line-height: 2;
+            line-height: 1;
+            white-space: pre;
+            overflow: hidden;
         }
 
         .image {
@@ -94,12 +97,14 @@
         <div class="page">
             {{#panels}}
                 <div class="panel">
-                    <div class="handle">
-                        {{! TODO: use more lines, sure }}
-                        {{filename}}{{^filename}}BLANK{{/filename}}<br />
-                        P {{page}}<br />
-                        # {{id}}
-                    </div>
+                    <div class="handle">Filename:
+{{filename}}{{^filename}}BLANK{{/filename}}
+
+Page:
+{{page}}
+
+ID:
+{{id}}</div>
                     {{#filename}}
                         <div class="image" style="background-image:url({{filename}})"></div>
                     {{/filename}}
