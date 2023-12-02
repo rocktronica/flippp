@@ -66,6 +66,9 @@ await new Command()
   .option("--crop <crop:boolean>", "Crop image or show all of it", {
     default: true,
   })
+  .option("--imageRotate <imageRotate:string>", "Optional image rotation", {
+    default: "0deg",
+  })
   .option("--imageFilter <imageFilter:string>", "Optional CSS filter", {
     default: "none",
   })
