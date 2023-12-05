@@ -65,9 +65,9 @@ const getPanels = async (
     filename: string | undefined,
     i: number,
   ) => ({
-    id: i,
+    id: i + 1,
     filename,
-    page: getPageIndex(i, panelsPerPage),
+    page: getPageIndex(i, panelsPerPage) + 1,
   }));
 };
 
@@ -83,7 +83,7 @@ const getPages = (
     .forEach(
       (i: number) => {
         pages.push({
-          panels: panels.filter((panel: Panel) => panel.page == i),
+          panels: panels.filter((panel: Panel) => panel.page == i + 1),
         });
       },
     );
@@ -100,18 +100,24 @@ export const getHtml = async (
   directory: string,
   settings: HtmlSettings,
 ) => {
+  const panels = await getPanels(
+    directory,
+    settings.rows * settings.columns,
+    settings.flyleavesCount,
+  );
+
+  const pages = getPages(
+    panels,
+    settings.rows,
+    settings.columns,
+    settings.pageSide,
+  );
+
   return await renderFile("./bsns/template.mustache", {
     title,
-    pages: getPages(
-      await getPanels(
-        directory,
-        settings.rows * settings.columns,
-        settings.flyleavesCount,
-      ),
-      settings.rows,
-      settings.columns,
-      settings.pageSide,
-    ),
+    pages,
+    panelCount: panels.length,
+    pageCount: pages.length,
     pageDirection: settings.pageSide == "front" ? "ltr" : "rtl",
     ...settings,
   });

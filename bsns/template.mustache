@@ -56,9 +56,26 @@
             font-family: monospace;
             padding: {{handlePadding}};
             font-size: 10px;
-            line-height: 1;
-            white-space: pre;
+            line-height: 1.2;
             overflow: hidden;
+        }
+
+        .handle header {
+            font-weight: 800;
+            font-size: 12px;
+        }
+
+        .handle footer {
+            font-size: 8px;
+            font-style: italic;
+        }
+
+        .handle dt {
+            font-weight: 800;
+        }
+
+        .handle header, .handle dd {
+            margin: 0 0 10px;
         }
 
         .image {
@@ -85,6 +102,7 @@
                 margin: 0;
             }
 
+            /* TODO: parameterize */
             .panel {
                 outline: none;
             }
@@ -97,14 +115,24 @@
         <div class="page">
             {{#panels}}
                 <div class="panel">
-                    <div class="handle">Filename:
-{{filename}}{{^filename}}BLANK{{/filename}}
+                    <div class="handle">
+                        <header>{{title}}</header>
 
-Page:
-{{page}}
+                        <dl>
+                            <dt>Filename:</dt>
+                            <dd>{{filename}}{{^filename}}BLANK{{/filename}}</dd>
 
-ID:
-{{id}}</div>
+                            <dt>Page:</dt>
+                            <dd>{{page}}/{{pageCount}}</dd>
+
+                            <dt>ID:</dt>
+                            <dd>{{id}}/{{panelCount}}</dd>
+                        </dl>
+
+                        <footer>
+                            made with flippp
+                        </footer>
+                    </div>
                     {{#filename}}
                         <div class="image" style="background-image:url({{filename}})"></div>
                     {{/filename}}
