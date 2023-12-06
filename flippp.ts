@@ -18,11 +18,21 @@ await new Command()
   })
   .option("--fps <fps:number>", "Frames Per Second", { default: 4 })
   .option("--dir <dir:string>", "Output directory path")
+  .option("--footer <footer:string>", "Text at bottom of handle", {
+    default: "made with flippp",
+  })
   .group("Layout options")
   .option("--rows <rows:number>", "Panel rows per page", { default: 5 })
   .option("--columns <columns:number>", "Panel columns per page", {
     default: 2,
   })
+  .option(
+    "--printCutLines <printCutLines:boolean>",
+    "Print lines for where to cut",
+    {
+      default: false,
+    },
+  )
   .group("Page options")
   .option("--pageWidth <pageWidth:string>", "Page width", { default: "8.5in" })
   .option("--pageHeight <pageHeight:string>", "Page height", {

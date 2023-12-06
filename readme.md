@@ -40,8 +40,8 @@ deno run -A --unstable flippp.ts -i <input> \
 
 Then:
 
-1. Print output PDF at 100% scale on cardstock or, if using default options, business card paper.
-1. If necessary, cut with a guillotine trimmer or similar; note that cutting guides are on-screen only and don't print.
+1. Print output PDF at 100% scale.
+1. Default layout options fit standard "business card" paper, which won't need to be cut. Otherwise, cut with a paper trimmer.
 1. Bind with a heavy-duty stapler. A binder clip works okay too.
 
 ### Notes

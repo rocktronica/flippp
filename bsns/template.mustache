@@ -102,10 +102,11 @@
                 margin: 0;
             }
 
-            /* TODO: parameterize */
-            .panel {
-                outline: none;
-            }
+            {{^printCutLines}}
+                .panel {
+                    outline: none;
+                }
+            {{/printCutLines}}
         }
     </style>
 </head>
@@ -129,9 +130,7 @@
                             <dd>{{id}}/{{panelCount}}</dd>
                         </dl>
 
-                        <footer>
-                            made with flippp
-                        </footer>
+                        <footer>{{footer}}</footer>
                     </div>
                     {{#filename}}
                         <div class="image" style="background-image:url({{filename}})"></div>

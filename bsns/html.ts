@@ -32,6 +32,8 @@ export interface HtmlSettings {
   imageFilter: string;
 
   flyleavesCount: number;
+
+  footer: string;
 }
 
 const getPageCount = (panelCount: number, panelsPerPage: number) =>
