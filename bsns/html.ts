@@ -57,16 +57,19 @@ const getPanels = async (
   // NOTE: this assumes numbers are zero-padded!
   filenames = filenames.sort();
 
+  const coverFilename = filenames[Math.round(filenames.length / 2)];
+
   filenames = [
     ...Array(flyleavesCount).fill(undefined),
     ...filenames,
     ...Array(flyleavesCount).fill(undefined),
   ];
 
-  return filenames.map((
+  return [coverFilename, ...filenames].map((
     filename: string | undefined,
     i: number,
   ) => ({
+    cover: i == 0,
     id: i + 1,
     filename,
     page: getPageIndex(i, panelsPerPage) + 1,

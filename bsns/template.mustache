@@ -78,15 +78,26 @@
             margin: 0 0 10px;
         }
 
-        .image {
+        .image, .cover {
             background-size:
                 {{#crop}}cover{{/crop}}
                 {{^crop}}contain{{/crop}};
             background-repeat: no-repeat;
             background-position: {{imagePosition}};
+        }
 
+        .image {
             width: {{imageWidth}};
             height: {{imageHeight}};
+            margin: {{imageMargin}};
+
+            filter: {{imageFilter}};
+            transform: rotate({{imageRotate}});
+        }
+
+        .cover {
+            flex: 1;
+
             margin: {{imageMargin}};
 
             filter: {{imageFilter}};
@@ -116,25 +127,30 @@
         <div class="page">
             {{#panels}}
                 <div class="panel">
-                    <div class="handle">
-                        <header>{{title}}</header>
+                    {{#cover}}
+                        <div class="cover" style="background-image:url({{filename}})"></div>
+                    {{/cover}}
+                    {{^cover}}
+                        <div class="handle">
+                            <header>{{title}}</header>
 
-                        <dl>
-                            <dt>Filename:</dt>
-                            <dd>{{filename}}{{^filename}}BLANK{{/filename}}</dd>
+                            <dl>
+                                <dt>Filename:</dt>
+                                <dd>{{filename}}{{^filename}}BLANK{{/filename}}</dd>
 
-                            <dt>Page:</dt>
-                            <dd>{{page}}/{{pageCount}}</dd>
+                                <dt>Page:</dt>
+                                <dd>{{page}}/{{pageCount}}</dd>
 
-                            <dt>ID:</dt>
-                            <dd>{{id}}/{{panelCount}}</dd>
-                        </dl>
+                                <dt>ID:</dt>
+                                <dd>{{id}}/{{panelCount}}</dd>
+                            </dl>
 
-                        <footer>{{footer}}</footer>
-                    </div>
-                    {{#filename}}
-                        <div class="image" style="background-image:url({{filename}})"></div>
-                    {{/filename}}
+                            <footer>{{footer}}</footer>
+                        </div>
+                        {{#filename}}
+                            <div class="image" style="background-image:url({{filename}})"></div>
+                        {{/filename}}
+                    {{/cover}}
                 </div>
             {{/panels}}
         </div>
