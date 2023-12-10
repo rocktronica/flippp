@@ -20,8 +20,12 @@ export const getDir = async (outputSlug: string): Promise<string> => {
   return `output/${timestamp}-${outputSlug}`;
 };
 
+const getBasename = async (input: string): Promise<string> => {
+  return await runGet("basename", [input]);
+};
+
 export const getOutputSlug = async (input: string): Promise<string> => {
-  const basename = await runGet("basename", [input]);
+  const basename = await getBasename(input);
   return basename.slice(0, basename.lastIndexOf("."));
 };
 
@@ -34,10 +38,27 @@ export const makeFolder = async (dir: string) => {
   console.log();
 };
 
+export const copyCover = async (
+  cover: string,
+  dir: string,
+  newFilename = "cover.png",
+) => {
+  const newCover = `${dir}/${newFilename}`;
+
+  console.log(`Copying cover image`);
+  await run("cp", [cover, newCover]);
+  console.log(`  - ${newCover}`);
+  console.log();
+
+  return newFilename;
+};
+
+export const FRAME_PREFIX = "frame-";
 export const extractFrames = async (
   input: string,
   fps: number,
   dir: string,
+  prefix = FRAME_PREFIX,
 ) => {
   console.log("Extracting frames");
 
@@ -49,7 +70,7 @@ export const extractFrames = async (
     "-hide_banner",
     "-loglevel",
     "error",
-    `${dir}/%04d.png`,
+    `${dir}/${prefix}-%04d.png`,
   ]);
 
   const count = (await runGet("ls", [dir])).split(/\r?\n|\r|\n/g).length;
@@ -73,10 +94,11 @@ export const exportPdf = async (
   dir: string,
   path: string,
   outputSlug: string,
+  cover: string | undefined,
   settings: HtmlSettings,
   port = 8080,
 ) => {
-  const html: BodyInit = await getHtml(outputSlug, dir, settings);
+  const html: BodyInit = await getHtml(outputSlug, dir, cover, settings);
 
   console.log("Export PDF");
 
@@ -86,7 +108,7 @@ export const exportPdf = async (
     { port },
     async (req: Request): Promise<Response> => {
       const url = new URL(req.url);
-      const isPng = !!url.pathname.match(/\/\d+.png/);
+      const isPng = !!url.pathname.match(/.*.png/);
 
       let body: BodyInit = html;
       if (isPng) {

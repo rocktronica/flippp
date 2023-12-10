@@ -1,5 +1,6 @@
 import { Command } from "https://deno.land/x/cliffy@v1.0.0-rc.3/command/mod.ts";
 import {
+  copyCover,
   exportPdf,
   extractFrames,
   getDir,
@@ -16,6 +17,7 @@ await new Command()
   .option("-i --input <input:string>", "Input movie file path", {
     required: true,
   })
+  .option("--cover <cover:string>", "Optional PNG cover image path")
   .option("--fps <fps:number>", "Frames Per Second", { default: 4 })
   .option("--dir <dir:string>", "Output directory path")
   .option("--footer <footer:string>", "Text at bottom of handle", {
@@ -87,15 +89,20 @@ await new Command()
     async (options) => {
       const startTime = Date.now();
 
-      let { input, fps, dir, ...settings } = options;
+      let { input, cover, fps, dir, ...settings } = options;
       const outputSlug = await getOutputSlug(input);
       dir = dir || await getDir(outputSlug);
       const outputPdfPath = getOutputPdfPath(dir, outputSlug);
 
       await makeFolder(dir);
+      let newCover = undefined;
+      if (cover) {
+        newCover = await copyCover(cover, dir);
+      }
+
       await extractFrames(input, fps, dir);
       await saveOptions(dir, options);
-      await exportPdf(dir, outputPdfPath, outputSlug, settings);
+      await exportPdf(dir, outputPdfPath, outputSlug, newCover, settings);
 
       report(Date.now() - startTime, input, outputPdfPath);
     },

@@ -1,6 +1,6 @@
-import { fileExtension } from "https://deno.land/x/file_extension@v2.1.0/mod.ts";
 import { range } from "https://deno.land/x/lodash@4.17.15-es/lodash.js";
 import { renderFile } from "https://deno.land/x/mustache@v0.3.0/mod.ts";
+import { FRAME_PREFIX } from "./interface.ts";
 
 interface Panel {
   id: number;
@@ -45,11 +45,13 @@ const getPageIndex = (i: number, panelsPerPage: number) =>
 const getPanels = async (
   directory: string,
   panelsPerPage: number,
+  cover: string | undefined,
   flyleavesCount: HtmlSettings["flyleavesCount"],
+  framePrefix = FRAME_PREFIX,
 ): Promise<Panel[]> => {
   let filenames: (string | undefined)[] = [];
   for await (const dirEntry of Deno.readDir(directory)) {
-    if (fileExtension(dirEntry.name) == "png") {
+    if (dirEntry.name.match(new RegExp(`${framePrefix}.*.png`))) {
       filenames.push(dirEntry.name);
     }
   }
@@ -57,19 +59,21 @@ const getPanels = async (
   // NOTE: this assumes numbers are zero-padded!
   filenames = filenames.sort();
 
-  const coverFilename = filenames[Math.round(filenames.length / 2)];
-
   filenames = [
     ...Array(flyleavesCount).fill(undefined),
     ...filenames,
     ...Array(flyleavesCount).fill(undefined),
   ];
 
-  return [coverFilename, ...filenames].map((
+  if (cover) {
+    filenames = [cover, ...filenames];
+  }
+
+  return filenames.map((
     filename: string | undefined,
     i: number,
   ) => ({
-    cover: i == 0,
+    cover: cover ? i == 0 : false,
     id: i + 1,
     filename,
     page: getPageIndex(i, panelsPerPage) + 1,
@@ -103,11 +107,13 @@ const getPages = (
 export const getHtml = async (
   title: string,
   directory: string,
+  cover: string | undefined,
   settings: HtmlSettings,
 ) => {
   const panels = await getPanels(
     directory,
     settings.rows * settings.columns,
+    cover,
     settings.flyleavesCount,
   );
 
