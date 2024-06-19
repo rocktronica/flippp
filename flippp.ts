@@ -90,7 +90,6 @@ await new Command()
   .option("--imageFilter <imageFilter:string>", "Optional CSS filter", {
     default: "none",
   })
-  .help({ colors: false })
   .action(
     async (options) => {
       const startTime = Date.now();
