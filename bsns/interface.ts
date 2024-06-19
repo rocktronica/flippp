@@ -90,9 +90,8 @@ export const saveOptions = async (dir: string, options: any) => {
   console.log();
 };
 
-export const exportPdf = async (
+export const serve = async (
   dir: string,
-  path: string,
   outputSlug: string,
   cover: string | undefined,
   settings: HtmlSettings,
@@ -100,11 +99,9 @@ export const exportPdf = async (
 ) => {
   const html: BodyInit = await getHtml(outputSlug, dir, cover, settings);
 
-  console.log("Export PDF");
-
   console.log("  - Starting server");
   printf("  - "); // Format "Listening..."
-  const server = Deno.serve(
+  return Deno.serve(
     { port },
     async (req: Request): Promise<Response> => {
       const url = new URL(req.url);
@@ -122,6 +119,19 @@ export const exportPdf = async (
       });
     },
   );
+};
+
+export const exportPdf = async (
+  dir: string,
+  path: string,
+  outputSlug: string,
+  cover: string | undefined,
+  settings: HtmlSettings,
+  port = 8080,
+) => {
+  console.log("Export PDF");
+
+  const server = await serve(dir, outputSlug, cover, settings, port);
 
   console.log(`  - Starting browser`);
   const browser = await puppeteer.launch();

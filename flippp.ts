@@ -9,6 +9,7 @@ import {
   makeFolder,
   report,
   saveOptions,
+  serve,
 } from "./bsns/interface.ts";
 
 await new Command()
@@ -23,6 +24,11 @@ await new Command()
   .option("--footer <footer:string>", "Text at bottom of handle", {
     default: "made with flippp",
   })
+  .option(
+    "--devMode <devMode:boolean>",
+    "Just build, serve, and wait to stop. No PDFs.",
+    { default: false },
+  )
   .group("Layout options")
   .option("--rows <rows:number>", "Panel rows per page", { default: 5 })
   .option("--columns <columns:number>", "Panel columns per page", {
@@ -89,7 +95,7 @@ await new Command()
     async (options) => {
       const startTime = Date.now();
 
-      let { input, cover, fps, dir, ...settings } = options;
+      let { input, cover, devMode, fps, dir, ...settings } = options;
       const outputSlug = await getOutputSlug(input);
       dir = dir || await getDir(outputSlug);
       const outputPdfPath = getOutputPdfPath(dir, outputSlug);
@@ -102,9 +108,15 @@ await new Command()
 
       await extractFrames(input, fps, dir);
       await saveOptions(dir, options);
-      await exportPdf(dir, outputPdfPath, outputSlug, newCover, settings);
 
-      report(Date.now() - startTime, input, outputPdfPath);
+      if (devMode) {
+        console.log("Dev mode!");
+        console.log("  - Press CTRL+C to quit");
+        await serve(dir, outputPdfPath, newCover, settings);
+      } else {
+        await exportPdf(dir, outputPdfPath, outputSlug, newCover, settings);
+        report(Date.now() - startTime, input, outputPdfPath);
+      }
     },
   )
   .parse();
