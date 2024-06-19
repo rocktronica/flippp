@@ -23,6 +23,10 @@ deno run flippp.ts -h
 # Default "business card" layout options
 deno run -A --unstable flippp.ts -i <input>
 
+# Vertical portrait video
+deno run -A --unstable flippp.ts -i <input> \
+    --crop false --imagePosition "center right"
+
 # Big and easy to cut
 deno run -A --unstable flippp.ts -i <input> \
     --rows 3 --columns 1 \
