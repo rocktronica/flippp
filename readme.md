@@ -6,7 +6,7 @@ Print it out, cut it up, staple, and flip!
 
 ## Usage
 
-``` bash
+```bash
 # Install requirements
 # (Here I'm using homebrew but, of course, you do you)
 brew install deno
@@ -50,11 +50,21 @@ Then:
 
 ### Notes
 
-* Panel dimensions are derived from `rows` and `columns` count minus `pagePadding`
-* "Handle" is always on the left but can be effectively changed with `imageRotate` option.
-* Most options use CSS units/syntax, ie `1in 2in` means "1 inch on top and bottom, 2 inches on right and left"
-* Image dimensions are left up to the user and don't update based on layout.
-* Double-sided flipbooks are possible using `pageSide` flag. Printing these can be tricky, so experiment with short books first to figure it out.
+- Panel dimensions are derived from `rows` and `columns` count minus `pagePadding`
+- "Handle" is always on the left but can be effectively changed with `imageRotate` option.
+- Most options use CSS units/syntax, ie `1in 2in` means "1 inch on top and bottom, 2 inches on right and left"
+- Image dimensions are left up to the user and don't update based on layout.
+- Double-sided flipbooks are possible using `pageSide` flag. Printing these can be tricky, so experiment with short books first to figure it out.
+- Recommended assembly for easy collating with paper trimmer
+  1. Stack papers with first frame in top left
+  2. Trim off outer margins
+  3. Cut vertically/lengthwise
+
+## TODO
+
+- Make collating easier
+- Fix --unstable flags
+- Standardize a landscape layout
 
 ## License
 
