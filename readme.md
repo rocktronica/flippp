@@ -60,9 +60,15 @@ Then:
   2. Trim off outer margins
   3. Cut vertically/lengthwise
 
+### How to cut for easy-ish collating
+
+1. After trimming off outer margins, cut lengthwise into vertical strips.
+2. You'll now have two strips per page. Order each pair so that the top frames are consecutive.
+3. Starting with the last two frames on the last page's strips, cut frames in descending order, so that the pile goes from the end to the beginning.
+
 ## TODO
 
-- Make collating easier
+- Auto-collate
 - Fix --unstable flags
 - Standardize a landscape layout
 
